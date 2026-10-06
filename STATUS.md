@@ -31,12 +31,13 @@
   - Externes FON-1-Gerät (Fehlversuch) gelöscht. Privater AB (**600, „alle“) ist deaktiviert – nicht anfassen; falls je aktiviert, 9998332 dort abwählen.
   - Mobilteil 1 + 3 und FRITZ!App Fon (HUAWEI BLN-L21) reagieren weiter auf „alle“ Nummern (Änderung durch Claude vom Auto-Mode blockiert – Familientelefone). Durch Sofort-Annahme klingeln sie praktisch nicht; falls doch: bei den Geräten 9998332 abwählen (Patrick).
   - Ausgehend nutzen alle Telefone 9994199 (privat).
+- NAS-Freigabe `PGH-Brandschutz` angelegt (06.10.2026, nur Administratoren; Ordner 00_Eingang … 08_Nachweise, `LIESMICH.txt`). Nächtliche verschlüsselte Sicherung zu Hetzner mit Archiv (nichts wird gelöscht), getestet.
+- Dabei gefunden und behoben: Hetzner-Fotosicherung lief seit Wochen nicht (Config lag auf QNAP-RAM-Disk, nach Neustart 02.10. weg; Fotos vom 22.08. fehlten). Neu aufgesetzt, nachgeholt. Empfehlung an Patrick: Storage-Box-Passwort ändern (ist identisch mit Crypt-Passwort und stand im Chat).
 
 ## Offen (nächste Schritte)
 1. Nach Lehrgang DIN 14676 (KW 42): Wartungs-Texte + Qualifikation freischalten (3 `[OFFEN]`-Stellen), Vorschau, Freigabe Patrick → `website/deploy.sh`.
 2. FritzBox: FritzBox-Absender läuft mit dem **aktuellen** info@-Passwort (eingetragen 06.10.2026, Testmail ok). Patrick ändert am 07.10.2026 selbst: info@-Passwort (konsoleH + Thunderbird + FritzBox System → Push Service → Absender → Kennwort, 2FA per App) und FritzBox-Kennwort. Testanruf auf 9998332 → Mail mit Audio in info@ prüfen.
 3. Postfach `belege@` erst zusammen mit der Belegablage anlegen (Passwort-Übergabe ohne Chat, z. B. Datei auf NAS).
-4. NAS-Freigabe `PGH-Brandschutz` + Aufnahme in Hetzner-Sicherung (rclone-Container sieht bisher nur `Multimedia/Bilder`).
-5. Fragebogen zur steuerlichen Erfassung (ELSTER) – Frist 1 Monat ab 11.10.2026.
-6. Berufsgenossenschaft-Meldung, Betriebshaftpflicht, ggf. Nebentätigkeitsgenehmigung.
-7. Nach Go-Live: Google-Unternehmensprofil (Servicegebiet, Adresse ausgeblendet), Bing Places, Search Console/Bing Webmaster, Das Örtliche/Gelbe Seiten.
+4. Fragebogen zur steuerlichen Erfassung (ELSTER) – Frist 1 Monat ab 11.10.2026.
+5. Berufsgenossenschaft-Meldung, Betriebshaftpflicht, ggf. Nebentätigkeitsgenehmigung.
+6. Nach Go-Live: Google-Unternehmensprofil (Servicegebiet, Adresse ausgeblendet), Bing Places, Search Console/Bing Webmaster, Das Örtliche/Gelbe Seiten.
