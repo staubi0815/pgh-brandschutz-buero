@@ -23,10 +23,17 @@
 - Mail-DNS geprüft (06.10.2026): MX `www793.your-server.de`, SPF `v=spf1 a mx ~all`, DKIM aktiv (Selektor `default2610`, Testmail dkim=pass/spf=pass), DMARC `v=DMARC1;p=quarantine;sp=quarantine;pct=100;adkim=r;aspf=r;`. Vor Versand über Fremddienste (z. B. Rechnungssoftware im eigenen Namen) DMARC/SPF anpassen.
 - Gesendet-Ordner: Hetzner legt Sent/Drafts/Trash erst an (Webmail einmal öffnen bzw. dort anlegen), dann in Thunderbird zuordnen – Patrick erledigt das.
 - AV-Vertrag (Art. 28 DSGVO) mit Hetzner von Patrick abgeschlossen (06.10.2026); PDF später in die Belegablage.
+- FritzBox 7590 (FRITZ!OS 8.25), von Claude mit Patricks Freigabe eingerichtet (06.10.2026; Login danach gelöscht, Patrick ändert das Kennwort):
+  - Integrierter AB „PGH-Brandschutz“ (**601), nur für 9998332, Annahme nach 20 s, Aufnahme max. 180 s, aktiv.
+  - Ansage per Text-zu-Sprache (männlich): „Guten Tag, Sie sind verbunden mit PGH-Brandschutz, Patrick Gerhäuser. Leider bin ich gerade nicht erreichbar. Bitte hinterlassen Sie nach dem Signalton Ihren Namen, Ihre Telefonnummer und Ihr Anliegen. Ich rufe Sie schnellstmöglich zurück.“ Später ggf. durch eigene Aufnahme ersetzen (Datei hochladen).
+  - Privater AB (**600, „alle“ Nummern) ist deaktiviert – nicht anfassen; falls er je aktiviert wird, 9998332 dort abwählen.
+  - Bei 9998332 klingeln Mobilteil 1 + 3 und FRITZ!App Fon (HUAWEI BLN-L21) mit („alle“). Ausgehend nutzen alle Telefone 9994199 (privat).
+  - Push Service: Absender ist Patricks privates Gmail → AB-Mail für PGH-Brandschutz bewusst **nicht** aktiviert (Gmail legt versandte Mails in „Gesendet“ ab = Kundendaten im Privatkonto).
+  - Rest: externes Gerät „PGH-Brandschutz“ an FON 1 (**1) – Fehlversuch, an FON 1 hängt nichts (keine Anrufe darüber seit 05/2025). Löschen durch Patrick (Telefoniegeräte → Mülleimer).
 
 ## Offen (nächste Schritte)
 1. Nach Lehrgang DIN 14676 (KW 42): Wartungs-Texte + Qualifikation freischalten (3 `[OFFEN]`-Stellen), Vorschau, Freigabe Patrick → `website/deploy.sh`.
-2. Patrick: FritzBox – Geschäftsnummer 9998332 (eigener AB mit Ansage, ausgehende Nummer, ggf. Klingelsperre). Anleitung gegeben.
+2. FritzBox: Testanruf auf 9998332 (Patrick), FON-1-Gerät löschen, FritzBox-Kennwort + info@-Kennwort ändern. Danach optional AB-Nachrichten per Mail an info@ (Absender auf info@ via `mail.your-server.de` 465/SSL umstellen – betrifft auch private Push-Mails) und ggf. Geschäftstelefon mit ausgehender 9998332.
 3. Postfach `belege@` erst zusammen mit der Belegablage anlegen (Passwort-Übergabe ohne Chat, z. B. Datei auf NAS).
 4. NAS-Freigabe `PGH-Brandschutz` + Aufnahme in Hetzner-Sicherung (rclone-Container sieht bisher nur `Multimedia/Bilder`).
 5. Fragebogen zur steuerlichen Erfassung (ELSTER) – Frist 1 Monat ab 11.10.2026.
