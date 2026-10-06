@@ -53,8 +53,11 @@ Rauchmelder-Wartung nach DIN 14676 erst nach Fachkraft-Lehrgang.
 - Inhalte: `website/src/pages/*.html` (Metadaten im Kopfkommentar), Rahmen `src/layout.html`,
   CSS/Logo/robots.txt in `static/`, strukturierte Daten `src/index.jsonld`.
 - Bauen: `python3 website/build.py --check` → `website/dist/` (nicht im Git) + Liste offener `[OFFEN: …]`-Stellen.
-- Vorschau: `python3 -m http.server 8765 --bind 127.0.0.1` in `dist/`, Screenshots per Playwright
-  (`~/tools/screenshot-tool/node_modules/playwright`). Vor jeder Fertigmeldung Screenshot prüfen.
+- Vorschau für Patrick: `website/vorschau.sh` → http://192.168.178.40:8092/ (NAS-Container `pgh-vorschau`, nur Heimnetz).
+  Screenshots per Playwright (`~/tools/screenshot-tool/node_modules/playwright`). Vor jeder Fertigmeldung Screenshot prüfen.
+- Hetzner: FTP-Hauptbenutzer `ebgkry` auf `www793.your-server.de`, Webroot `public_html/` (enthält bis zum ersten
+  Upload Hetzners Platzhalter `index.htm`, wird von `deploy.sh` entfernt). Logs: IPs gekürzt, 7 Tage (Standard) –
+  Datenschutzerklärung beruht darauf, Einstellung nicht ändern ohne Text anzupassen.
 - Hochladen: `website/deploy.sh` (SFTP mit Schlüssel `~/.ssh/id_hetzner_webhosting_pgh`, Server/User in
   `~/.config/pgh-brandschutz/hetzner.env`). Bricht ab, solange `[OFFEN: …]`-Stellen existieren.
   **Nur nach ausdrücklicher Freigabe durch Patrick.**
