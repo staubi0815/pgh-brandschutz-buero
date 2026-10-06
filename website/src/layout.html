@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}}</title>
+  <meta name="description" content="{{description}}">
+  <meta name="robots" content="{{robots}}">
+  <link rel="canonical" href="{{canonical}}">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/style.css">
+  <meta property="og:title" content="{{title}}">
+  <meta property="og:description" content="{{description}}">
+  <meta property="og:url" content="{{canonical}}">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="de_DE">
+  {{jsonld}}
+</head>
+<body>
+  <a class="skip" href="#inhalt">Zum Inhalt springen</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="/" aria-label="PGH-Brandschutz – zur Startseite">
+        <img src="/img/logo.svg" alt="PGH-Brandschutz" width="220" height="48">
+      </a>
+      <a class="header-phone" href="tel:+4981689998332">08168 9998332</a>
+    </div>
+    <nav class="main-nav" aria-label="Hauptnavigation">
+      <div class="wrap">
+        <ul>
+          {{nav}}
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main id="inhalt">
+{{content}}
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <p class="footer-title">PGH-Brandschutz</p>
+        <p>Patrick Gerhäuser<br>Am Pfannenstiel 8<br>85406 Zolling (OT Oberappersdorf)</p>
+      </div>
+      <div>
+        <p class="footer-title">Kontakt</p>
+        <p>Telefon: <a href="tel:+4981689998332">08168 9998332</a><br>
+           E-Mail: <a href="mailto:info@pgh-brandschutz.de">info@pgh-brandschutz.de</a></p>
+        <p>Einsatzgebiet: Landkreis Freising und Umgebung (ca. 30 km)</p>
+      </div>
+      <div>
+        <p class="footer-title">Rechtliches</p>
+        <p><a href="/impressum/">Impressum</a><br><a href="/datenschutz/">Datenschutz</a></p>
+      </div>
+    </div>
+    <div class="wrap footer-bottom">© {{year}} PGH-Brandschutz · Patrick Gerhäuser</div>
+  </footer>
+</body>
+</html>

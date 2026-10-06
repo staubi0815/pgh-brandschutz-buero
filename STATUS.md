@@ -14,9 +14,14 @@
 - SFTP per Schlüssel: `~/.ssh/id_hetzner_webhosting_pgh` (RSA 4096, Public Key im RFC4716-Format in konsoleH beim FTP-Hauptbenutzer).
 - Website-Strategie-Dokument von Patrick (Google Drive, "compass_artifact_wf-722e1c26…") geprüft: übernehmen = statisches HTML, robots.txt KI-Crawler erlauben, Google-Unternehmensprofil (Servicegebiet, Adresse ausgeblendet), Bing Places, Search Console/Bing Webmaster, wenige Verzeichnisse (Das Örtliche, Gelbe Seiten, ggf. wlw), FAQ-Inhalte. Weglassen = llms.txt-Aufwand, KI-Monitoring-Abos, Markenanmeldung, Wikidata, Analytics zum Start.
 
+- Hetzner-Server: `www793.your-server.de` (FTP-Benutzername noch offen). Telefon geschäftlich: 08168 9998332 (bisher ungenutzte Festnetznummer). Einsatzgebiet: Landkreis Freising + ca. 30 km.
+- Website-Entwurf gebaut (8 Seiten + 404, robots.txt, Sitemap, JSON-LD). Patrick: **noch nicht online stellen**.
+
 ## Offen (nächste Schritte)
-1. Patrick: SFTP-Public-Key in konsoleH eintragen, Server + FTP-Benutzername nennen.
-2. Postfächer `info@`, `belege@` anlegen (IMAP-Passwort belege@ → `~/.config/pgh-brandschutz/`).
+1. Patrick: FTP-Benutzernamen nennen (Key ist laut Plan in konsoleH einzutragen) → in `~/.config/pgh-brandschutz/hetzner.env`.
+2. Website: 7 `[OFFEN]`-Stellen (Lehrgangstermin DIN 14676, Türen-Text, W-IdNr, Log-Speicherdauer, AV-Vertrag Hetzner) klären; Freigabe durch Patrick.
+3. FritzBox: Anleitung für Geschäftsnummer (AB, Ansage, ausgehende Nummer) an Patrick gegeben – Umsetzung durch Patrick.
+4. Postfächer `info@`, `belege@` anlegen (IMAP-Passwort belege@ → `~/.config/pgh-brandschutz/`).
 3. Website-Entwurf bauen → Screenshots → Freigabe → Upload.
 4. Postfächer `info@`, `belege@` anlegen.
 5. NAS-Freigabe `PGH-Brandschutz` + Aufnahme in Hetzner-Sicherung (NAS-Änderung nur nach Rückfrage).

@@ -40,11 +40,27 @@ Rauchmelder-Wartung nach DIN 14676 erst nach Fachkraft-Lehrgang.
 |---|---|---|
 | Dieses Repo (Anleitung, Website-Quelltext, Vorlagen, Skripte) | GitHub `staubi0815/pgh-brandschutz-buero`, Klon `/home/claude/repos/pgh-brandschutz-buero` | angelegt 2026-10-06 |
 | Domain + Webhosting + Mail | Hetzner Webhosting S, `pgh-brandschutz.de` | Bestellung offen |
-| Website | statisch, ohne Cookies/externe Schriften, Upload per SFTP | offen |
+| Website | statisch, `website/` (siehe unten) | Entwurf fertig, **nicht online** |
 | Mail | `info@` (Kunden), `belege@` (Belegeingang, Claude holt per IMAP ab) | offen |
 | Datenablage | NAS QNAP, eigene Freigabe `PGH-Brandschutz` | offen |
 | Außer-Haus-Sicherung | Hetzner (aktuell nur `Multimedia/Bilder`) – Büro-Freigabe ergänzen | offen |
 | Fahrtenliste, Einnahmen/Ausgaben | auf NAS | offen |
 | Paperless-ngx / Telegram-Bot | bewusst zurückgestellt | später |
+
+## Website (`website/`)
+
+- Statisches HTML, **kein JavaScript, keine Cookies, keine externen Schriften/Inhalte** → kein Cookie-Banner nötig.
+- Inhalte: `website/src/pages/*.html` (Metadaten im Kopfkommentar), Rahmen `src/layout.html`,
+  CSS/Logo/robots.txt in `static/`, strukturierte Daten `src/index.jsonld`.
+- Bauen: `python3 website/build.py --check` → `website/dist/` (nicht im Git) + Liste offener `[OFFEN: …]`-Stellen.
+- Vorschau: `python3 -m http.server 8765 --bind 127.0.0.1` in `dist/`, Screenshots per Playwright
+  (`~/tools/screenshot-tool/node_modules/playwright`). Vor jeder Fertigmeldung Screenshot prüfen.
+- Hochladen: `website/deploy.sh` (SFTP mit Schlüssel `~/.ssh/id_hetzner_webhosting_pgh`, Server/User in
+  `~/.config/pgh-brandschutz/hetzner.env`). Bricht ab, solange `[OFFEN: …]`-Stellen existieren.
+  **Nur nach ausdrücklicher Freigabe durch Patrick.**
+- Inhaltliche Regeln: keine Feuerwehr-Bezüge; „Fachkraft für Rauchwarnmelder“/„nach DIN 14676“ erst nach
+  bestandenem Lehrgang; Brandschutztüren/Feststellanlagen erst nach Sachkunde (DIN 14677); keine
+  erfundenen Referenzen/Bewertungen/Erfahrungsjahre; Rechtsaussagen mit „keine Rechtsberatung“.
+- NAP überall identisch: „PGH-Brandschutz · Am Pfannenstiel 8 · 85406 Zolling (OT Oberappersdorf) · 08168 9998332“.
 
 Details/Entscheidungen: `STATUS.md`.
