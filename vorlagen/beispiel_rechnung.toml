@@ -1,0 +1,42 @@
+# BEISPIEL – erfundener Kunde, Beispielpreise (keine Preisempfehlung).
+# Echte Eingabedateien NICHT ins Repo, sondern nur auf dem NAS (dokument.py legt sie dort unter _daten/ ab).
+
+[kunde]
+name = "Musterverwaltung GmbH"
+zusatz = "z. Hd. Frau Beispiel"
+strasse = "Musterstraße 1"
+plz_ort = "85354 Freising"
+kurz = "Musterverwaltung"          # für Datei- und Ordnernamen
+# kundennummer = "K-001"
+
+[dokument]
+# datum = "2026-10-20"             # leer = heute
+leistungsdatum = "15.10.2026"      # Pflicht für endgültige Rechnungen (Tag oder Zeitraum als Text)
+betreff = "Montage Rauchwarnmelder"
+objekt = "WEG Beispielweg 5, 85354 Freising"
+# ihr_zeichen = "Auftrag vom 01.10.2026"
+# anrede = "Sehr geehrte Frau Beispiel,"
+# einleitung = "…"
+# schluss = "…"
+ausweis_35a = true                 # Arbeits-/Fahrtkostenanteil ausweisen (für Nebenkosten-/Steuerabrechnung)
+
+[[position]]
+menge = 12
+einheit = "Stk."
+text = "Rauchwarnmelder nach DIN EN 14604 mit Q-Label, fest eingebaute 10-Jahres-Batterie"
+preis = "24.90"
+art = "material"                   # material | arbeit | fahrt
+
+[[position]]
+menge = 12
+einheit = "Stk."
+text = "Montage je Rauchwarnmelder an der Decke inkl. Funktionsprüfung und Dokumentation (Montageprotokoll)"
+preis = "9.50"
+art = "arbeit"
+
+[[position]]
+menge = 1
+einheit = "pausch."
+text = "Anfahrt"
+preis = "15.00"
+art = "fahrt"

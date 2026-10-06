@@ -34,6 +34,7 @@
 - NAS-Freigabe `PGH-Brandschutz` angelegt (06.10.2026, nur Administratoren; Ordner 00_Eingang … 08_Nachweise, `LIESMICH.txt`). Nächtliche verschlüsselte Sicherung zu Hetzner mit Archiv (nichts wird gelöscht), getestet.
 - Dabei gefunden und behoben: Hetzner-Fotosicherung lief seit Wochen nicht (Config lag auf QNAP-RAM-Disk, nach Neustart 02.10. weg; Fotos vom 22.08. fehlten). Neu aufgesetzt, nachgeholt. Empfehlung an Patrick: Storage-Box-Passwort ändern (ist identisch mit Crypt-Passwort und stand im Chat).
 - Postfach `belege@pgh-brandschutz.de` angelegt (Patrick), Abholung per Cron alle 15 min → NAS `00_Eingang` (erlaubt: PDF, Bilder, XML; anhanglose Mails als .eml; zip/exe/Office werden nicht übernommen). Getestet 06.10.2026.
+- Vorlagen + Werkzeuge (06.10.2026): `tools/dokument.py` (Rechnung/Angebot, Entwurf/final, Ausgangsbücher), `tools/fahrten.py` (Fahrtenliste 0,30 €/km), Layout DIN 5008. Getestet lokal + NAS. Endgültige Rechnungen erst, wenn Steuernummer (Pflicht nach § 34a UStDV) und IBAN in `vorlagen/firma.toml` stehen.
 
 ## Offen (nächste Schritte)
 1. Nach Lehrgang DIN 14676 (KW 42): Wartungs-Texte + Qualifikation freischalten (3 `[OFFEN]`-Stellen), Vorschau, Freigabe Patrick → `website/deploy.sh`.
@@ -41,3 +42,4 @@
 3. Fragebogen zur steuerlichen Erfassung (ELSTER) – Frist 1 Monat ab 11.10.2026.
 4. Berufsgenossenschaft-Meldung, Betriebshaftpflicht, ggf. Nebentätigkeitsgenehmigung.
 5. Nach Go-Live: Google-Unternehmensprofil (Servicegebiet, Adresse ausgeblendet), Bing Places, Search Console/Bing Webmaster, Das Örtliche/Gelbe Seiten.
+6. Steuernummer (nach Fragebogen) und IBAN (ING-Geschäftskonto) in `vorlagen/firma.toml` eintragen → dann sind endgültige Rechnungen möglich.

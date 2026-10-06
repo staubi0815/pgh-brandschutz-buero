@@ -1,0 +1,64 @@
+/* Rechnung/Angebot – A4 nach DIN 5008 Form B (Anschriftfeld 45 mm von oben, 20 mm von links) */
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Liberation Sans", Arial, Helvetica, sans-serif;
+  font-size: 10pt; line-height: 1.4; color: #1b2a3a;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.seite { position: relative; padding: 0 20mm 0 25mm; }
+
+/* Falz- und Lochmarken */
+.marke { position: fixed; left: 0; width: 6mm; border-top: 0.3pt solid #8a96a3; }
+.marke.f1 { top: 105mm; } .marke.f2 { top: 210mm; } .marke.loch { top: 148.5mm; width: 9mm; }
+
+.kopf { height: 45mm; padding-top: 12mm; display: flex; justify-content: space-between; align-items: flex-start; }
+.kopf svg { width: 62mm; height: auto; }
+.kopf .kontakt { text-align: right; font-size: 8.5pt; color: #52606d; line-height: 1.5; }
+
+.anschrift-zeile { display: flex; justify-content: space-between; }
+.anschrift { width: 85mm; height: 45mm; }
+.ruecksende { font-size: 7pt; color: #52606d; border-bottom: 0.3pt solid #8a96a3; padding-bottom: 1mm; margin-bottom: 3mm; white-space: nowrap; }
+.empfaenger { font-size: 10.5pt; line-height: 1.45; }
+
+.info { width: 70mm; font-size: 9pt; margin-top: 5mm; }
+.info table { width: 100%; border-collapse: collapse; }
+.info td { padding: 0.6mm 0; vertical-align: top; }
+.info td:first-child { color: #52606d; width: 33mm; }
+
+h1 { font-size: 15pt; margin: 6mm 0 1mm; }
+.objekt { color: #52606d; margin: 0 0 5mm; }
+p { margin: 0 0 3mm; }
+
+table.pos { width: 100%; border-collapse: collapse; margin: 4mm 0 2mm; font-size: 9.5pt; }
+table.pos th { text-align: left; font-weight: 700; border-bottom: 1pt solid #1b2a3a; padding: 1.5mm 1.5mm; }
+table.pos td { padding: 1.8mm 1.5mm; border-bottom: 0.3pt solid #c9d1d9; vertical-align: top; }
+table.pos .r { text-align: right; white-space: nowrap; }
+table.pos .nr { width: 8mm; color: #52606d; }
+table.pos .menge { width: 24mm; }
+table.pos .ep, table.pos .gp { width: 26mm; }
+table.pos tr { page-break-inside: avoid; }
+.art { display: block; font-size: 7.5pt; color: #8a96a3; }
+
+table.summe { margin-left: auto; width: 80mm; border-collapse: collapse; font-size: 10pt; page-break-inside: avoid; }
+table.summe td { padding: 1.2mm 1.5mm; }
+table.summe td:last-child { text-align: right; white-space: nowrap; }
+table.summe tr.gesamt td { font-weight: 700; font-size: 11.5pt; border-top: 1pt solid #1b2a3a; border-bottom: 2.5pt double #1b2a3a; }
+
+.hinweis { margin-top: 5mm; font-size: 9pt; page-break-inside: avoid; }
+.kasten { border-left: 2.5pt solid #b71c1c; background: #f7f8fa; padding: 2mm 3mm; margin: 3mm 0; }
+
+.fuss {
+  position: fixed; bottom: 0; left: 0; right: 0; height: 26mm; padding: 4mm 20mm 0 25mm;
+  border-top: 0.5pt solid #c9d1d9; font-size: 7.5pt; color: #52606d; line-height: 1.45;
+  display: flex; justify-content: space-between; background: #fff;
+}
+.fuss div { width: 31%; }
+.platzhalter-fuss { height: 32mm; }
+
+.offen { background: #fff3b0; outline: 1px dashed #c9a400; padding: 0 1mm; color: #6b5800; }
+.wasserzeichen {
+  position: fixed; top: 120mm; left: 0; right: 0; text-align: center; transform: rotate(-30deg);
+  font-size: 90pt; font-weight: 700; color: rgba(183, 28, 28, 0.10); letter-spacing: 6mm; z-index: 0; pointer-events: none;
+}

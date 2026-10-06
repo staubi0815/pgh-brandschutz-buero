@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>$titel</title>
+<style>$css</style>
+</head>
+<body>
+$wasserzeichen
+<div class="marke f1"></div><div class="marke loch"></div><div class="marke f2"></div>
+<div class="seite">
+  <div class="kopf">
+    $logo
+    <div class="kontakt">$f_inhaber<br>$f_strasse · $f_plz_ort<br>Tel. $f_telefon<br>$f_email · $f_web</div>
+  </div>
+
+  <div class="anschrift-zeile">
+    <div class="anschrift">
+      <div class="ruecksende">$f_name · $f_strasse · $f_plz_ort</div>
+      <div class="empfaenger">$empfaenger</div>
+    </div>
+    <div class="info"><table>$infozeilen</table></div>
+  </div>
+
+  <h1>$ueberschrift</h1>
+  $objekt
+  $einleitung
+
+  <table class="pos">
+    <thead><tr><th class="nr">Pos.</th><th>Leistung / Artikel</th><th class="menge r">Menge</th><th class="ep r">Einzelpreis</th><th class="gp r">Gesamt</th></tr></thead>
+    <tbody>$positionen</tbody>
+  </table>
+
+  <table class="summe">$summenzeilen</table>
+
+  <div class="hinweis">
+    <div class="kasten">$kleinunternehmer</div>
+    $hinweis_35a
+    $zahlung
+    $schluss
+  </div>
+  <div class="platzhalter-fuss"></div>
+</div>
+
+<div class="fuss">
+  <div><strong>$f_name</strong><br>Inhaber: $f_inhaber<br>$f_strasse<br>$f_plz_ort</div>
+  <div>Tel. $f_telefon<br>$f_email<br>$f_web<br>Steuernummer: $f_steuernummer</div>
+  <div>Bankverbindung: $f_bank<br>IBAN: $f_iban<br>BIC: $f_bic</div>
+</div>
+</body>
+</html>

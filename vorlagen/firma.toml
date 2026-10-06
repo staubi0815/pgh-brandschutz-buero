@@ -1,0 +1,22 @@
+# Stammdaten für Rechnungen und Angebote (tools/dokument.py).
+# Leere Pflichtwerte = noch offen → das Werkzeug erzeugt dann nur Entwürfe (mit Wasserzeichen).
+
+name = "PGH-Brandschutz"
+inhaber = "Patrick Gerhäuser"
+strasse = "Am Pfannenstiel 8"
+plz_ort = "85406 Zolling"
+telefon = "08168 9998332"
+email = "info@pgh-brandschutz.de"
+web = "www.pgh-brandschutz.de"
+
+# Pflicht nach § 34a Nr. 2 UStDV (Steuernummer ODER USt-IdNr ODER Kleinunternehmer-IdNr).
+# Kommt nach dem Fragebogen zur steuerlichen Erfassung vom Finanzamt.
+steuernummer = ""
+
+bank = "ING"
+iban = ""              # Geschäftskonto in Eröffnung
+bic = "INGDDEFFXXX"
+
+zahlungsziel_tage = 14
+angebot_gueltig_tage = 30
+km_satz = "0.30"       # Fahrten mit dem Privat-PKW, € je gefahrenem km

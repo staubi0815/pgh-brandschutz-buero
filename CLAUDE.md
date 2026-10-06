@@ -44,8 +44,40 @@ Rauchmelder-Wartung nach DIN 14676 erst nach Fachkraft-Lehrgang.
 | Mail | `info@` (Kunden), `belege@` (Belegeingang: `tools/belege_abholen.py` per Cron alle 15 min auf LXC 191 → NAS `00_Eingang`, Mail danach in IMAP-Ordner `Abgeholt`; Log `~/.local/state/pgh-brandschutz/belege.log`) | aktiv 2026-10-06 |
 | Datenablage | NAS QNAP, Freigabe `PGH-Brandschutz` (`\\192.168.178.40\PGH-Brandschutz`, per SSH `/share/CACHEDEV1_DATA/PGH-Brandschutz`), nur Administratoren. Struktur + Benennung siehe `LIESMICH.txt` dort | angelegt 2026-10-06 |
 | Außer-Haus-Sicherung | Container `rclone-hetzner` auf dem NAS: täglich 02:30 verschlüsselt nach `hetzner-crypt-pgh:aktuell`, Gelöschtes/Geändertes nach `archiv/<Zeitstempel>` – **Archiv nie löschen**. Details: homelab-infra `infra/nas-qnap.md` | aktiv 2026-10-06 |
-| Fahrtenliste, Einnahmen/Ausgaben | auf NAS | offen |
+| Rechnungen, Angebote, Fahrtenliste | `tools/dokument.py`, `tools/fahrten.py`, Vorlagen in `vorlagen/`; Ergebnisse + Bücher auf dem NAS | Werkzeuge fertig 2026-10-06; endgültige Rechnungen erst mit Steuernummer + IBAN |
+| EÜR / Einnahmen-Ausgaben-Auswertung | auf NAS | offen |
 | Paperless-ngx / Telegram-Bot | bewusst zurückgestellt | später |
+
+## Arbeitsabläufe
+
+Alle Werkzeuge laufen hier auf LXC 191 und schreiben per `ssh nas` in die Freigabe
+`/share/CACHEDEV1_DATA/PGH-Brandschutz`. Kundendaten nie ins Repo – Eingabedateien nur in `/tmp` und auf dem NAS.
+
+### Rechnung / Angebot schreiben
+1. Angaben von Patrick sammeln: Kunde (Name, Anschrift, Kurzname), Objekt, Leistungsdatum, Positionen mit Menge/Preis/Art
+   (`material`, `arbeit`, `fahrt` – Arbeit+Fahrt ergeben den § 35a-Anteil). Format: `vorlagen/beispiel_rechnung.toml`.
+2. Eingabe als `/tmp/<kurz>.toml` schreiben, **Entwurf** erzeugen: `tools/dokument.py rechnung /tmp/<kurz>.toml`
+   → `02_Rechnungen/Entwuerfe/` (Angebot: `07_Kunden/Entwuerfe/`). Kontrollbild: `pdftoppm -png -r 80 <pdf> /tmp/x`.
+3. Patrick prüft den Entwurf (NAS). **Erst nach seiner Freigabe**: `… --final` → fortlaufende Nummer
+   (`2026-001` bzw. `A-2026-001`), PDF nach `02_Rechnungen/<Jahr>/` bzw. `07_Kunden/<kurz>/`, Eingabe unter `_daten/`,
+   Zeile in `02_Rechnungen/rechnungsausgangsbuch.csv` bzw. `07_Kunden/angebotsbuch.csv`. Entwurf danach löschen.
+4. Rechnungen werden nie geändert oder gelöscht. Fehler → Stornorechnung (negative Beträge, Bezug auf Original-Nr.) + neue Rechnung.
+5. Zahlungseingang: im Ausgangsbuch Spalte `Bezahlt_am` eintragen (Kontoauszug in `03_Bank/<Jahr>/`).
+
+Rechtsgrundlage Pflichtangaben: § 34a UStDV (Kleinunternehmer, seit 2025) – Name/Anschrift beider Seiten, **Steuernummer**
+(oder USt-IdNr/Kleinunternehmer-IdNr), Ausstellungsdatum, Menge/Art bzw. Umfang/Art, Entgelt + Hinweis auf § 19 UStG.
+Kleinunternehmer dürfen immer als PDF („sonstige Rechnung“) schicken (§ 34a Satz 3 UStDV). `dokument.py --final`
+bricht ab, solange `steuernummer`/`iban` in `vorlagen/firma.toml` leer sind.
+
+### Fahrt eintragen
+`tools/fahrten.py eintragen --datum JJJJ-MM-TT --ziel "…" --zweck "…" --einfach <km>` (Hin+Rück) oder `--km <gesamt>`.
+Liste: `04_Fahrten/<Jahr>/fahrten_<Jahr>.csv` (0,30 €/km aus `firma.toml`). Summe: `tools/fahrten.py summe --jahr <J>`.
+
+### Belege einsortieren
+Neue Dateien in `00_Eingang` (von `belege@` oder Patrick) ansehen, umbenennen nach
+`JJJJ-MM-TT_Firma_Betrag_Beschreibung.<ext>` und verschieben: Ausgaben → `01_Ausgaben/<Jahr>/`, Kontoauszüge →
+`03_Bank/<Jahr>/`, Verträge/Versicherung → `05_Vertraege/`, Steuer → `06_Steuer/<Jahr>/`, Zertifikate → `08_Nachweise/`.
+Unklare Belege in `00_Eingang` lassen und Patrick fragen. Nichts löschen.
 
 ## Website (`website/`)
 

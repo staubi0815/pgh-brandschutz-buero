@@ -1,0 +1,35 @@
+# BEISPIEL – erfundener Kunde, Beispielpreise (keine Preisempfehlung).
+
+[kunde]
+name = "Musterverwaltung GmbH"
+zusatz = "z. Hd. Frau Beispiel"
+strasse = "Musterstraße 1"
+plz_ort = "85354 Freising"
+kurz = "Musterverwaltung"
+
+[dokument]
+betreff = "Ausstattung mit Rauchwarnmeldern"
+objekt = "WEG Beispielweg 5, 85354 Freising – 6 Wohneinheiten"
+# gueltig_tage = 30                # Standard aus firma.toml
+schluss = "Die Montage erfolgt nach Terminabsprache mit den Bewohnern; nicht angetroffene Wohnungen werden kostenlos ein zweites Mal angefahren."
+
+[[position]]
+menge = 18
+einheit = "Stk."
+text = "Rauchwarnmelder nach DIN EN 14604 mit Q-Label, fest eingebaute 10-Jahres-Batterie"
+preis = "24.90"
+art = "material"
+
+[[position]]
+menge = 18
+einheit = "Stk."
+text = "Montage je Rauchwarnmelder an der Decke inkl. Funktionsprüfung und Montageprotokoll je Wohnung"
+preis = "9.50"
+art = "arbeit"
+
+[[position]]
+menge = 1
+einheit = "pausch."
+text = "Anfahrt"
+preis = "15.00"
+art = "fahrt"
