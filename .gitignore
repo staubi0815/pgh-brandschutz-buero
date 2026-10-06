@@ -1,0 +1,5 @@
+# Zugangsdaten und Daten gehören nicht ins Repo
+*.env
+secrets/
+*.key
+daten/
