@@ -18,12 +18,11 @@
 - Website-Entwurf gebaut (8 Seiten + 404, robots.txt, Sitemap, JSON-LD). Patrick: **noch nicht online stellen**.
 
 ## Offen (nächste Schritte)
-1. Patrick: FTP-Benutzernamen nennen (Key ist laut Plan in konsoleH einzutragen) → in `~/.config/pgh-brandschutz/hetzner.env`.
-2. Website: 7 `[OFFEN]`-Stellen (Lehrgangstermin DIN 14676, Türen-Text, W-IdNr, Log-Speicherdauer, AV-Vertrag Hetzner) klären; Freigabe durch Patrick.
+1. Patrick: FTP-Benutzernamen nennen (SFTP-Key in konsoleH eintragen) → `~/.config/pgh-brandschutz/hetzner.env`.
+2. Website: 7 `[OFFEN]`-Stellen klären (Lehrgangstermin DIN 14676, Türen-Text, W-IdNr, Log-Speicherdauer, AV-Vertrag Hetzner); danach Freigabe durch Patrick → `website/deploy.sh`.
 3. FritzBox: Anleitung für Geschäftsnummer (AB, Ansage, ausgehende Nummer) an Patrick gegeben – Umsetzung durch Patrick.
 4. Postfächer `info@`, `belege@` anlegen (IMAP-Passwort belege@ → `~/.config/pgh-brandschutz/`).
-3. Website-Entwurf bauen → Screenshots → Freigabe → Upload.
-4. Postfächer `info@`, `belege@` anlegen.
-5. NAS-Freigabe `PGH-Brandschutz` + Aufnahme in Hetzner-Sicherung (NAS-Änderung nur nach Rückfrage).
+5. NAS-Freigabe `PGH-Brandschutz` + Aufnahme in Hetzner-Sicherung (rclone-Container sieht bisher nur `Multimedia/Bilder`; NAS-Änderung nur nach Rückfrage).
 6. Fragebogen zur steuerlichen Erfassung (ELSTER) – Frist 1 Monat ab 11.10.2026.
 7. Berufsgenossenschaft-Meldung, Betriebshaftpflicht, ggf. Nebentätigkeitsgenehmigung.
+8. Später: Google-Unternehmensprofil (Servicegebiet, Adresse ausgeblendet), Bing Places, Search Console/Bing Webmaster, Das Örtliche/Gelbe Seiten.
