@@ -10,9 +10,13 @@
 - Belege kommen per Mail (`belege@`), nicht per Telegram.
 - Repo angelegt, Deploy-Key `~/.ssh/id_deploy_pgh-brandschutz-buero`, Alias `github.com-pgh-brandschutz-buero`.
 
+- Hetzner Webhosting S + Domain laut Patrick bestellt (06.10.2026 abends; DNS noch nicht aktiv).
+- SFTP per Schlüssel: `~/.ssh/id_hetzner_webhosting_pgh` (RSA 4096, Public Key im RFC4716-Format in konsoleH beim FTP-Hauptbenutzer).
+- Website-Strategie-Dokument von Patrick (Google Drive, "compass_artifact_wf-722e1c26…") geprüft: übernehmen = statisches HTML, robots.txt KI-Crawler erlauben, Google-Unternehmensprofil (Servicegebiet, Adresse ausgeblendet), Bing Places, Search Console/Bing Webmaster, wenige Verzeichnisse (Das Örtliche, Gelbe Seiten, ggf. wlw), FAQ-Inhalte. Weglassen = llms.txt-Aufwand, KI-Monitoring-Abos, Markenanmeldung, Wikidata, Analytics zum Start.
+
 ## Offen (nächste Schritte)
-1. Patrick: Hetzner Webhosting S + Domain bestellen.
-2. Zugangsdaten sicher hinterlegen (SFTP, Postfächer) unter `~/.config/pgh-brandschutz/`.
+1. Patrick: SFTP-Public-Key in konsoleH eintragen, Server + FTP-Benutzername nennen.
+2. Postfächer `info@`, `belege@` anlegen (IMAP-Passwort belege@ → `~/.config/pgh-brandschutz/`).
 3. Website-Entwurf bauen → Screenshots → Freigabe → Upload.
 4. Postfächer `info@`, `belege@` anlegen.
 5. NAS-Freigabe `PGH-Brandschutz` + Aufnahme in Hetzner-Sicherung (NAS-Änderung nur nach Rückfrage).
