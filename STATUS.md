@@ -22,13 +22,13 @@
 - E-Mail `info@pgh-brandschutz.de` eingerichtet (Patrick, Thunderbird für Android per IMAP; Gmail-POP-Abruf wieder entfernt). Test in beide Richtungen ok.
 - Mail-DNS geprüft (06.10.2026): MX `www793.your-server.de`, SPF `v=spf1 a mx ~all`, DKIM aktiv (Selektor `default2610`, Testmail dkim=pass/spf=pass), DMARC `v=DMARC1;p=quarantine;sp=quarantine;pct=100;adkim=r;aspf=r;`. Vor Versand über Fremddienste (z. B. Rechnungssoftware im eigenen Namen) DMARC/SPF anpassen.
 - Gesendet-Ordner: Hetzner legt Sent/Drafts/Trash erst an (Webmail einmal öffnen bzw. dort anlegen), dann in Thunderbird zuordnen – Patrick erledigt das.
+- AV-Vertrag (Art. 28 DSGVO) mit Hetzner von Patrick abgeschlossen (06.10.2026); PDF später in die Belegablage.
 
 ## Offen (nächste Schritte)
-1. Patrick: AV-Vertrag (Auftragsverarbeitung) mit Hetzner in konsoleH abschließen → dann `[OFFEN]` in datenschutz.html entfernen.
-2. Nach Lehrgang DIN 14676 (KW 42): Wartungs-Texte + Qualifikation freischalten (3 `[OFFEN]`-Stellen), Vorschau, Freigabe Patrick → `website/deploy.sh`.
-3. Patrick: FritzBox – Geschäftsnummer 9998332 (eigener AB mit Ansage, ausgehende Nummer, ggf. Klingelsperre). Anleitung gegeben.
-4. Postfach `belege@` erst zusammen mit der Belegablage anlegen (Passwort-Übergabe ohne Chat, z. B. Datei auf NAS).
-5. NAS-Freigabe `PGH-Brandschutz` + Aufnahme in Hetzner-Sicherung (rclone-Container sieht bisher nur `Multimedia/Bilder`).
-6. Fragebogen zur steuerlichen Erfassung (ELSTER) – Frist 1 Monat ab 11.10.2026.
-7. Berufsgenossenschaft-Meldung, Betriebshaftpflicht, ggf. Nebentätigkeitsgenehmigung.
-8. Nach Go-Live: Google-Unternehmensprofil (Servicegebiet, Adresse ausgeblendet), Bing Places, Search Console/Bing Webmaster, Das Örtliche/Gelbe Seiten.
+1. Nach Lehrgang DIN 14676 (KW 42): Wartungs-Texte + Qualifikation freischalten (3 `[OFFEN]`-Stellen), Vorschau, Freigabe Patrick → `website/deploy.sh`.
+2. Patrick: FritzBox – Geschäftsnummer 9998332 (eigener AB mit Ansage, ausgehende Nummer, ggf. Klingelsperre). Anleitung gegeben.
+3. Postfach `belege@` erst zusammen mit der Belegablage anlegen (Passwort-Übergabe ohne Chat, z. B. Datei auf NAS).
+4. NAS-Freigabe `PGH-Brandschutz` + Aufnahme in Hetzner-Sicherung (rclone-Container sieht bisher nur `Multimedia/Bilder`).
+5. Fragebogen zur steuerlichen Erfassung (ELSTER) – Frist 1 Monat ab 11.10.2026.
+6. Berufsgenossenschaft-Meldung, Betriebshaftpflicht, ggf. Nebentätigkeitsgenehmigung.
+7. Nach Go-Live: Google-Unternehmensprofil (Servicegebiet, Adresse ausgeblendet), Bing Places, Search Console/Bing Webmaster, Das Örtliche/Gelbe Seiten.
