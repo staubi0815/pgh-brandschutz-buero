@@ -34,7 +34,11 @@
 
 ## Offen (nächste Schritte)
 1. Nach Lehrgang DIN 14676 (KW 42): Wartungs-Texte + Qualifikation freischalten (3 `[OFFEN]`-Stellen), Vorschau, Freigabe Patrick → `website/deploy.sh`.
-2. FritzBox: Testanruf auf 9998332 (Patrick) → Mail mit Audio in info@ prüfen; FritzBox-Kennwort ändern; info@-Kennwort ändern (dann Thunderbird + FritzBox-Absender anpassen).
+2. FritzBox (Patrick will am 07.10.2026 die Passwörter ändern, Claude ändert den Push-Absender mit):
+   a) Testanruf auf 9998332 → Mail mit Audio in info@ prüfen.
+   b) Patrick ändert info@-Passwort in konsoleH + Thunderbird, legt es als einzige Zeile in `\\192.168.178.40\Public\info.txt` ab (nicht im Chat).
+   c) Claude: FritzBox-Login (noch altes Kennwort von Patrick) → System → Push Service → Absender → Kennwort aus info.txt, 2FA per Authenticator-Code (Hintergrundskript `steps/totp_bg.js`, Code als Datei `/tmp/fb_code`), Testmail prüfen, info.txt mit `shred` löschen.
+   d) Erst danach ändert Patrick das FritzBox-Kennwort.
 3. Postfach `belege@` erst zusammen mit der Belegablage anlegen (Passwort-Übergabe ohne Chat, z. B. Datei auf NAS).
 4. NAS-Freigabe `PGH-Brandschutz` + Aufnahme in Hetzner-Sicherung (rclone-Container sieht bisher nur `Multimedia/Bilder`).
 5. Fragebogen zur steuerlichen Erfassung (ELSTER) – Frist 1 Monat ab 11.10.2026.
