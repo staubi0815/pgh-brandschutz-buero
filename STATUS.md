@@ -38,7 +38,7 @@
 
 ## Offen (nächste Schritte)
 1. Nach Lehrgang DIN 14676 (KW 42): Wartungs-Texte + Qualifikation freischalten (3 `[OFFEN]`-Stellen), Vorschau, Freigabe Patrick → `website/deploy.sh`.
-2. FritzBox: FritzBox-Absender läuft mit dem **aktuellen** info@-Passwort (eingetragen 06.10.2026, Testmail ok). Patrick ändert am 07.10.2026 selbst: info@-Passwort (konsoleH + Thunderbird + FritzBox System → Push Service → Absender → Kennwort, 2FA per App) und FritzBox-Kennwort. Testanruf auf 9998332 → Mail mit Audio in info@ prüfen.
+2. Passwörter: info@ + FritzBox-Login von Patrick geändert (07.10.2026, altes info@-PW abgelehnt = geprüft). Noch offen: neues info@-PW im FritzBox-Push-Absender (System → Push Service → Absender, Testmail), Testanruf 9998332 → AB-Mail mit Audio; FTP-Passwort (konsoleH) und Storage-Box-Passwort (= Crypt-PW, stand im Chat) ändern.
 3. Fragebogen zur steuerlichen Erfassung (ELSTER) – Frist 1 Monat ab 11.10.2026.
 4. Berufsgenossenschaft-Meldung, Betriebshaftpflicht, ggf. Nebentätigkeitsgenehmigung.
 5. Nach Go-Live: Google-Unternehmensprofil (Servicegebiet, Adresse ausgeblendet), Bing Places, Search Console/Bing Webmaster, Das Örtliche/Gelbe Seiten.
