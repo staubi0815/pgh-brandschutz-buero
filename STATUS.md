@@ -36,6 +36,7 @@
 - Postfach `belege@pgh-brandschutz.de` angelegt (Patrick), Abholung per Cron alle 15 min → NAS `00_Eingang` (erlaubt: PDF, Bilder, XML; anhanglose Mails als .eml; zip/exe/Office werden nicht übernommen). Getestet 06.10.2026.
 - Vorlagen + Werkzeuge (06.10.2026): `tools/dokument.py` (Rechnung/Angebot, Entwurf/final, Ausgangsbücher), `tools/fahrten.py` (Fahrtenliste 0,30 €/km), Layout DIN 5008. Getestet lokal + NAS. Endgültige Rechnungen erst, wenn Steuernummer (Pflicht nach § 34a UStDV) und IBAN in `vorlagen/firma.toml` stehen.
 - E-Rechnung (07.10.2026, Wunsch Patrick, freiwillig): endgültige Rechnungen = ZUGFeRD/Factur-X EN 16931 (Kategorie E, § 19-Befreiungsgrund, Steuernummer BT-32, Verkäuferkennung BT-29), Prüfung mit Mustang 2.26.0 vor dem Speichern. Getestet: Einzeltag, Zeitraum, Lieferantennummer gültig; mehrdeutiges Leistungsdatum wird abgelehnt.
+- AB-Ansage (07.10.2026): FritzBox-TTS klingt schlecht (Patrick). Neu: `tools/ansage.py` (Piper, lokal, Stimmen in `~/tools/piper-voices`; Thorsten/Kerstin CC0, Karlsson/Ramona M-AILABS mit Quellenangabe) → WAV 8 kHz mono 16 bit für FritzBox-Upload. Aussprache: „P G H“, „Gehr-häuser“ (langes e). Fix: abgetrenntes Kombinationszeichen im Laut ç („ich“) wird zusammengesetzt. 7 Hörproben an info@ geschickt – Auswahl durch Patrick offen.
 
 ## Offen (nächste Schritte)
 1. Nach Lehrgang DIN 14676 (KW 42): Wartungs-Texte + Qualifikation freischalten (3 `[OFFEN]`-Stellen), Vorschau, Freigabe Patrick → `website/deploy.sh`.
@@ -44,3 +45,4 @@
 4. Berufsgenossenschaft-Meldung, Betriebshaftpflicht, ggf. Nebentätigkeitsgenehmigung.
 5. Nach Go-Live: Google-Unternehmensprofil (Servicegebiet, Adresse ausgeblendet), Bing Places, Search Console/Bing Webmaster, Das Örtliche/Gelbe Seiten.
 6. Steuernummer (nach Fragebogen) und IBAN (ING-Geschäftskonto) in `vorlagen/firma.toml` eintragen → dann sind endgültige Rechnungen möglich.
+7. AB-Ansage: Patrick wählt Hörprobe (Nr. + langes/kurzes e) → WAV in FritzBox hochladen (Telefonie → Anrufbeantworter → PGH-Brandschutz → Einstellungen → Ansage ändern → Eigene Ansage → Datei hochladen). Falls Qualität nicht reicht: Azure-Neural-TTS (eigenes Konto, Free Tier) oder Profi-Sprecher.
