@@ -8,10 +8,12 @@ strasse = "Musterstraße 1"
 plz_ort = "85354 Freising"
 kurz = "Musterverwaltung"          # für Datei- und Ordnernamen
 # kundennummer = "K-001"
+# lieferantennummer = "70123"      # meine Kreditoren-/Lieferantennummer beim Kunden (E-Rechnung BT-29), sonst Steuernummer
+# email = "rechnung@musterverwaltung.example"   # Rechnungsadresse des Kunden (E-Rechnung BT-49)
 
 [dokument]
 # datum = "2026-10-20"             # leer = heute
-leistungsdatum = "15.10.2026"      # Pflicht für endgültige Rechnungen (Tag oder Zeitraum als Text)
+leistungsdatum = "15.10.2026"      # Pflicht für endgültige Rechnungen: "TT.MM.JJJJ" oder "TT.MM.JJJJ - TT.MM.JJJJ"
 betreff = "Montage Rauchwarnmelder"
 objekt = "WEG Beispielweg 5, 85354 Freising"
 # ihr_zeichen = "Auftrag vom 01.10.2026"

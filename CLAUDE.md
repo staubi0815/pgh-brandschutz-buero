@@ -61,12 +61,19 @@ Alle Werkzeuge laufen hier auf LXC 191 und schreiben per `ssh nas` in die Freiga
 3. Patrick prüft den Entwurf (NAS). **Erst nach seiner Freigabe**: `… --final` → fortlaufende Nummer
    (`2026-001` bzw. `A-2026-001`), PDF nach `02_Rechnungen/<Jahr>/` bzw. `07_Kunden/<kurz>/`, Eingabe unter `_daten/`,
    Zeile in `02_Rechnungen/rechnungsausgangsbuch.csv` bzw. `07_Kunden/angebotsbuch.csv`. Entwurf danach löschen.
+   Endgültige Rechnungen sind automatisch **E-Rechnungen** (ZUGFeRD/Factur-X, Profil EN 16931, `tools/erechnung.py`):
+   XML im PDF, vor dem Speichern mit Mustang geprüft – ungültig ⇒ nichts gespeichert, keine Nummer verbraucht.
+   Leistungsdatum dafür strikt `TT.MM.JJJJ` oder `TT.MM.JJJJ - TT.MM.JJJJ`. Optional im `[kunde]`-Block:
+   `lieferantennummer` (meine Nummer beim Kunden, BT-29; sonst Steuernummer) und `email` (Rechnungsadresse).
+   Voraussetzungen auf LXC 191: venv `~/.venvs/pgh` (factur-x, pikepdf – `dokument.py` wechselt selbst hinein),
+   Java 17 + `~/tools/mustang/Mustang-CLI-2.26.0.jar`.
 4. Rechnungen werden nie geändert oder gelöscht. Fehler → Stornorechnung (negative Beträge, Bezug auf Original-Nr.) + neue Rechnung.
 5. Zahlungseingang: im Ausgangsbuch Spalte `Bezahlt_am` eintragen (Kontoauszug in `03_Bank/<Jahr>/`).
 
 Rechtsgrundlage Pflichtangaben: § 34a UStDV (Kleinunternehmer, seit 2025) – Name/Anschrift beider Seiten, **Steuernummer**
 (oder USt-IdNr/Kleinunternehmer-IdNr), Ausstellungsdatum, Menge/Art bzw. Umfang/Art, Entgelt + Hinweis auf § 19 UStG.
-Kleinunternehmer dürfen immer als PDF („sonstige Rechnung“) schicken (§ 34a Satz 3 UStDV). `dokument.py --final`
+Kleinunternehmer dürfen immer als PDF („sonstige Rechnung“) schicken (§ 34a Satz 3 UStDV) – die E-Rechnung ist freiwillig
+(Wunsch Patrick 07.10.2026), Pflicht erst bei Wegfall der Kleinunternehmerregelung (B2B ab 2028). `dokument.py --final`
 bricht ab, solange `steuernummer`/`iban` in `vorlagen/firma.toml` leer sind.
 
 ### Fahrt eintragen

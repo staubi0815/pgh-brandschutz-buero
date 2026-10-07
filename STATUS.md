@@ -35,6 +35,7 @@
 - Dabei gefunden und behoben: Hetzner-Fotosicherung lief seit Wochen nicht (Config lag auf QNAP-RAM-Disk, nach Neustart 02.10. weg; Fotos vom 22.08. fehlten). Neu aufgesetzt, nachgeholt. Empfehlung an Patrick: Storage-Box-Passwort ändern (ist identisch mit Crypt-Passwort und stand im Chat).
 - Postfach `belege@pgh-brandschutz.de` angelegt (Patrick), Abholung per Cron alle 15 min → NAS `00_Eingang` (erlaubt: PDF, Bilder, XML; anhanglose Mails als .eml; zip/exe/Office werden nicht übernommen). Getestet 06.10.2026.
 - Vorlagen + Werkzeuge (06.10.2026): `tools/dokument.py` (Rechnung/Angebot, Entwurf/final, Ausgangsbücher), `tools/fahrten.py` (Fahrtenliste 0,30 €/km), Layout DIN 5008. Getestet lokal + NAS. Endgültige Rechnungen erst, wenn Steuernummer (Pflicht nach § 34a UStDV) und IBAN in `vorlagen/firma.toml` stehen.
+- E-Rechnung (07.10.2026, Wunsch Patrick, freiwillig): endgültige Rechnungen = ZUGFeRD/Factur-X EN 16931 (Kategorie E, § 19-Befreiungsgrund, Steuernummer BT-32, Verkäuferkennung BT-29), Prüfung mit Mustang 2.26.0 vor dem Speichern. Getestet: Einzeltag, Zeitraum, Lieferantennummer gültig; mehrdeutiges Leistungsdatum wird abgelehnt.
 
 ## Offen (nächste Schritte)
 1. Nach Lehrgang DIN 14676 (KW 42): Wartungs-Texte + Qualifikation freischalten (3 `[OFFEN]`-Stellen), Vorschau, Freigabe Patrick → `website/deploy.sh`.

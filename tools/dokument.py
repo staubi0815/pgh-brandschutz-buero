@@ -11,6 +11,10 @@ Mit --final: nächste freie Nummer aus dem Ausgangsbuch (Rechnung 2026-001, Ange
   (§ 34a UStDV: u. a. Steuernummer) oder dieselben Eingabedaten schon einmal final erzeugt wurden.
 --lokal DIR: alles in ein lokales Verzeichnis statt aufs NAS (zum Testen).
 
+Endgültige Rechnungen sind zugleich E-Rechnungen (ZUGFeRD/Factur-X, Profil EN 16931, siehe erechnung.py):
+das XML wird ins PDF eingebettet und vor dem Speichern mit Mustang geprüft – bei Fehlern wird nichts
+gespeichert und keine Nummer verbraucht. Läuft automatisch in der venv ~/.venvs/pgh.
+
 Eingabeformat: siehe vorlagen/beispiel_rechnung.toml. Kundendaten gehören NICHT ins Repo –
 Eingabedateien liegen nur auf dem NAS (bzw. in /tmp beim Erstellen).
 """
@@ -29,6 +33,14 @@ from decimal import ROUND_HALF_UP, Decimal
 from html import escape
 from string import Template
 from zoneinfo import ZoneInfo
+
+# E-Rechnung braucht factur-x/pikepdf aus der venv ~/.venvs/pgh – bei Aufruf mit System-Python dorthin wechseln
+VENV = os.path.expanduser("~/.venvs/pgh")
+try:
+    import facturx  # noqa: F401
+except ImportError:
+    if os.path.exists(os.path.join(VENV, "bin", "python")) and sys.prefix != VENV:
+        os.execv(os.path.join(VENV, "bin", "python"), [os.path.join(VENV, "bin", "python")] + sys.argv)
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VORLAGEN = os.path.join(REPO, "vorlagen")
@@ -233,6 +245,9 @@ def baue_html(art, d, firma, nummer, entwurf):
         zweck = escape(nummer) if not entwurf else "die Rechnungsnummer"
         zahlung = (f"<p>Bitte überweisen Sie den Gesamtbetrag ohne Abzug bis zum <strong>{dmy(faellig)}</strong> "
                    f"auf das unten genannte Konto. Verwendungszweck: {zweck}.</p>")
+        if not entwurf:
+            zahlung += ("<p style=\"font-size:8pt;color:#52606d\">Diese PDF-Rechnung enthält die Rechnungsdaten zusätzlich "
+                        "maschinenlesbar (E-Rechnung ZUGFeRD/Factur-X, Profil EN 16931).</p>")
         ueberschrift = f"Rechnung {'' if entwurf else escape(nummer)}".strip()
     else:
         zahlung = "<p>Ich freue mich auf Ihren Auftrag. Bei Fragen erreichen Sie mich unter der unten genannten Telefonnummer.</p>"
@@ -258,8 +273,9 @@ def baue_html(art, d, firma, nummer, entwurf):
         "kleinunternehmer": KLEINUNTERNEHMER, "hinweis_35a": hinweis_35a, "zahlung": zahlung, "schluss": schluss,
     }
     html = Template(open(os.path.join(VORLAGEN, "dokument.html")).read()).substitute(werte)
-    meta = {"datum": datum, "gesamt": gesamt, "anteil_35a": anteil_35a,
-            "gueltig": gueltig if art == "angebot" else None}
+    meta = {"datum": datum, "gesamt": gesamt, "anteil_35a": anteil_35a, "zeilen": zeilen,
+            "gueltig": gueltig if art == "angebot" else None,
+            "faellig": faellig if art == "rechnung" else None}
     return html, meta
 
 
@@ -294,6 +310,12 @@ def main():
         stempel = datetime.now(TZ).strftime("%Y-%m-%d_%H%M")
         ziel = ablage.schreiben(f"{k['entwurf_dir']}/ENTWURF_{k['titel']}_{kurz}_{stempel}.pdf", pdf_aus_html(html))
         print(f"Entwurf: {ziel}  ({eur(meta['gesamt'])})")
+        if a.art == "rechnung":
+            import erechnung
+            try:
+                erechnung.leistungszeit(d.get("dokument", {}).get("leistungsdatum", ""))
+            except ValueError as exc:
+                print(f"HINWEIS für die endgültige Rechnung: {exc}")
         return
 
     fehlend = [n for n in ("steuernummer", "iban") if not firma.get(n)]
@@ -301,6 +323,12 @@ def main():
         fehlend.append("[dokument].leistungsdatum")
     if fehlend:
         fehler(f"Für ein endgültiges Dokument fehlt: {', '.join(fehlend)} (vorlagen/firma.toml bzw. Eingabe)")
+    if a.art == "rechnung":
+        import erechnung
+        try:
+            erechnung.leistungszeit(d["dokument"]["leistungsdatum"])
+        except ValueError as exc:
+            fehler(str(exc))
 
     buch = ablage.lesen(k["buch"])
     vorher = schon_erzeugt(buch, sha)
@@ -310,6 +338,16 @@ def main():
     nummer = naechste_nummer(buch, k["praefix"], datum.year)
     html, meta = baue_html(a.art, d, firma, nummer, entwurf=False)
     pdf = pdf_aus_html(html)
+    if a.art == "rechnung":
+        try:
+            xml = erechnung.cii_xml(d, firma, nummer, meta["datum"], meta["faellig"], meta["zeilen"], meta["gesamt"])
+        except ValueError as exc:
+            fehler(str(exc))
+        pdf = erechnung.einbetten(pdf, xml, nummer, firma, d["kunde"]["name"])
+        gueltig, bericht = erechnung.pruefen(pdf)
+        if not gueltig:
+            fehler(f"E-Rechnung nicht gültig – nichts gespeichert, keine Nummer verbraucht. Mustang: {bericht}")
+        print("E-Rechnung (ZUGFeRD EN 16931) mit Mustang geprüft: gültig")
 
     if a.art == "rechnung":
         ordner = f"02_Rechnungen/{datum.year}"
