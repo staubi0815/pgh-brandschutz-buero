@@ -51,3 +51,7 @@
 8. Patrick: Belege der Anlaufkosten an belege@ (Bohrhammer, Leiter, Domain/Hosting, Gewerbeanmeldung, Lehrgang DIN 14676, Fahrten) → Claude sortiert ein und erfasst im Journal (privat bezahlt).
 9. Prüfbericht Phase 4 (braucht Patrick): Storage-Box-Snapshots in der Hetzner Console, Storage-Box- und FTP-Passwort ändern, info@-Archivierung (neues info@-Passwort per Datei), Datenschutz (VVT, Löschkonzept, Claude-Abo/AV-Vertrag, AV Hetzner Storage Box).
 10. Werkzeug für Stornorechnung (Typ 381) vor der ersten Korrektur bauen.
+11. Ferninspektion (Recherche `docs/recherche-ferninspektion-2026-10-08.md`): Anfrage an Ei Electronics
+    (kundendienst@eielectronics.de, Konto/AES-Schlüssel/Datenpunkte/Empfänger/Bezug) am 08.10.2026 aus info@ gesendet,
+    Kopie in INBOX.Sent → Antwort abwarten, dann über Eigenbau (wmbusmeters) oder Ei-Software entscheiden.
+    info@-Zugang liegt jetzt in `~/.config/pgh-brandschutz/info.env` (600) – nutzbar auch für info@-Archivierung (Punkt 9).
