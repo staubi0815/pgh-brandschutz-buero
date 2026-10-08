@@ -7,6 +7,7 @@ Ablauf je Mail im Posteingang:
   - Hat eine Mail keinen solchen Anhang (z. B. Online-Quittung als HTML-Mail), wird die
     komplette Mail als .eml abgelegt, damit nichts verloren geht.
   - Anschließend wird die Mail in den IMAP-Ordner "Abgeholt" verschoben (nicht gelöscht).
+  - Jede Abholung steht im Eingangsprotokoll 06_Steuer/<Jahr>/protokolle/belegeingang_<Jahr>.log (GoBD Rz. 117).
 
 Andere Dateitypen (exe, zip, Office mit Makros …) werden bewusst nicht übernommen, nur protokolliert.
 Zugangsdaten: ~/.config/pgh-brandschutz/belege.env (IMAP_HOST, IMAP_USER, IMAP_PASS), nie im Repo.
@@ -23,6 +24,9 @@ import sys
 from datetime import datetime
 from email.utils import parseaddr, parsedate_to_datetime
 from zoneinfo import ZoneInfo
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from gemeinsam import Ablage, protokoll_pfad, werkzeug_version  # noqa: E402
 
 ENV = os.path.expanduser("~/.config/pgh-brandschutz/belege.env")
 NAS_HOST = "nas"  # SSH-Alias aus ~/.ssh/config
@@ -72,6 +76,17 @@ def nas_ablegen(name, daten, dry_run):
     return erg.stdout.decode().strip()
 
 
+def protokollieren(absender, betreff, msg_id, abgelegt, uebersprungen):
+    """Eingangsprotokoll je Jahr auf dem NAS (GoBD Rz. 117). Fehler hier stoppen die Abholung nicht."""
+    zeile = (f"{datetime.now(TZ):%Y-%m-%d %H:%M:%S} | von {absender} | „{betreff}“ | {msg_id} | "
+             f"abgelegt: {', '.join(abgelegt)}" + (f" | nicht übernommen: {', '.join(uebersprungen)}" if uebersprungen else "")
+             + f" | Werkzeug {werkzeug_version()}\n")
+    try:
+        Ablage().anhaengen(protokoll_pfad(datetime.now(TZ).year, "belegeingang"), zeile)
+    except SystemExit as exc:
+        log(f"FEHLER Eingangsprotokoll: {exc}")
+
+
 def verarbeite(msg_bytes, dry_run):
     msg = email.message_from_bytes(msg_bytes, policy=email.policy.default)
     absender = parseaddr(msg.get("From", ""))[1] or "unbekannt"
@@ -101,6 +116,8 @@ def verarbeite(msg_bytes, dry_run):
         abgelegt.append(nas_ablegen(f"{praefix}_{sauber(betreff or 'Mail')}.eml", msg_bytes, dry_run))
     if not abgelegt:
         abgelegt.append("NICHTS abgelegt – nur nicht erlaubte Anhänge, Mail liegt in IMAP-Ordner Abgeholt")
+    if not dry_run:
+        protokollieren(absender, betreff, msg.get("Message-ID", "ohne Message-ID"), abgelegt, uebersprungen)
     return absender, betreff, abgelegt, uebersprungen
 
 
