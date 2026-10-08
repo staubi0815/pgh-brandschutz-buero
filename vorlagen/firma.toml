@@ -17,6 +17,13 @@ bank = "ING"
 iban = ""              # Geschäftskonto in Eröffnung
 bic = "INGDDEFFXXX"
 
+# Kleinunternehmer (§ 19 UStG; Abschn. 19.1 UStAE i. d. F. BMF 18.03.2025) – gerechnet nach vereinnahmten Entgelten
+gruendung = "2026-10-11"
+ku_grenze_gruendungsjahr = 25000   # im Jahr der Gründung gilt 25.000 € für das laufende Jahr
+ku_grenze_vorjahr = 25000
+ku_grenze_laufend = 100000
+ku_warnung_ab = 0.8                # Warnung ab 80 % der Grenze
+
 zahlungsziel_tage = 14
 angebot_gueltig_tage = 30
 km_satz = "0.30"       # Fahrten mit dem Privat-PKW, € je gefahrenem km

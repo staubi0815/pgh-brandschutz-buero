@@ -6,41 +6,21 @@
   fahrten.py summe [--jahr 2026] [--lokal DIR]
 
 --km = insgesamt gefahrene km; --einfach = einfache Strecke, wird für Hin- und Rückfahrt verdoppelt.
-Datei: NAS PGH-Brandschutz/04_Fahrten/<Jahr>/fahrten_<Jahr>.csv (Semikolon, Dezimalkomma, öffnet direkt in Excel).
+Datei: NAS PGH-Brandschutz/04_Fahrten/<Jahr>/fahrten_<Jahr>.csv (Semikolon, Dezimalkomma; nur lesend in Excel öffnen).
+Jede Änderung wird mit Vorversion in 04_Fahrten/<Jahr>/_historie/ protokolliert.
 """
 import argparse
-import csv
-import io
 import os
 import sys
-import tomllib
 from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from dokument import VORLAGEN, Ablage, eur, fehler, zahl  # noqa: E402
+from gemeinsam import (Ablage, Buch, betrag_text, dez, dmy, eur, fahrten_pfad, fehler, firma,  # noqa: E402
+                       heute, jetzt, zahl)
 
-KOPF = ["Datum", "Start", "Ziel", "Zweck / Kunde", "km", "Satz €/km", "Betrag €", "Bemerkung"]
+KOPF = ["Datum", "Start", "Ziel", "Zweck / Kunde", "km", "Satz €/km", "Betrag €", "Bemerkung", "Erfasst_am"]
 START = "Am Pfannenstiel 8, Zolling (Betrieb)"
-
-
-def komma(d):
-    return f"{d}".replace(".", ",")
-
-
-def lade_liste(ablage, jahr):
-    rel = f"04_Fahrten/{jahr}/fahrten_{jahr}.csv"
-    roh = ablage.lesen(rel)
-    zeilen = list(csv.DictReader(io.StringIO(roh.decode("utf-8-sig")), delimiter=";")) if roh else []
-    return rel, zeilen
-
-
-def speichern(ablage, rel, zeilen):
-    puffer = io.StringIO()
-    w = csv.DictWriter(puffer, fieldnames=KOPF, delimiter=";")
-    w.writeheader()
-    w.writerows(sorted(zeilen, key=lambda z: z["Datum"]))
-    ablage.schreiben(rel, ("﻿" + puffer.getvalue()).encode("utf-8"), ueberschreiben=True)
 
 
 def main():
@@ -57,28 +37,34 @@ def main():
     e.add_argument("--bemerkung", default="")
     e.add_argument("--lokal")
     s = sub.add_parser("summe")
-    s.add_argument("--jahr", type=int, default=date.today().year)
+    s.add_argument("--jahr", type=int, default=heute().year)
     s.add_argument("--lokal")
     a = ap.parse_args()
 
     ablage = Ablage(a.lokal)
     if a.befehl == "eintragen":
         tag = date.fromisoformat(a.datum)
-        satz = Decimal(tomllib.load(open(os.path.join(VORLAGEN, "firma.toml"), "rb"))["km_satz"])
+        if tag > heute():
+            fehler("Fahrten in der Zukunft können nicht eingetragen werden.")
+        satz = Decimal(firma()["km_satz"])
         gesamt_km = a.km if a.km is not None else a.einfach * 2
         if gesamt_km <= 0:
             fehler("km muss größer 0 sein")
         betrag = (gesamt_km * satz).quantize(Decimal("0.01"), ROUND_HALF_UP)
         bem = a.bemerkung or ("Hin- und Rückfahrt" if a.einfach is not None else "")
-        rel, zeilen = lade_liste(ablage, tag.year)
-        zeilen.append({"Datum": tag.isoformat(), "Start": a.start, "Ziel": a.ziel, "Zweck / Kunde": a.zweck,
-                       "km": zahl(gesamt_km), "Satz €/km": komma(satz), "Betrag €": komma(betrag), "Bemerkung": bem})
-        speichern(ablage, rel, zeilen)
-        print(f"Eingetragen: {tag:%d.%m.%Y} {a.ziel} – {zahl(gesamt_km)} km = {eur(betrag)}")
+        buch = Buch(ablage, fahrten_pfad(tag.year), KOPF)
+        buch.zeilen.append({"Datum": tag.isoformat(), "Start": a.start, "Ziel": a.ziel, "Zweck / Kunde": a.zweck,
+                            "km": zahl(gesamt_km), "Satz €/km": betrag_text(satz),
+                            "Betrag €": betrag_text(betrag), "Bemerkung": bem, "Erfasst_am": f"{jetzt():%Y-%m-%d %H:%M}"})
+        buch.zeilen.sort(key=lambda z: z["Datum"])
+        buch.speichern(f"Fahrt {dmy(tag)} {a.ziel} ({zahl(gesamt_km)} km) eingetragen")
+        print(f"Eingetragen: {dmy(tag)} {a.ziel} – {zahl(gesamt_km)} km = {eur(betrag)}")
+        if (heute() - tag).days > 10:
+            print("HINWEIS: Fahrt liegt mehr als 10 Tage zurück – künftig zeitnah eintragen (GoBD Rz. 47).")
     else:
-        rel, zeilen = lade_liste(ablage, a.jahr)
-        km_summe = sum((Decimal(z["km"].replace(",", ".")) for z in zeilen), Decimal("0"))
-        eur_summe = sum((Decimal(z["Betrag €"].replace(",", ".")) for z in zeilen), Decimal("0"))
+        zeilen = Buch(ablage, fahrten_pfad(a.jahr), KOPF).zeilen
+        km_summe = sum((dez(z["km"]) for z in zeilen), Decimal("0"))
+        eur_summe = sum((dez(z["Betrag €"]) for z in zeilen), Decimal("0"))
         print(f"Fahrten {a.jahr}: {len(zeilen)} Fahrten, {zahl(km_summe)} km, {eur(eur_summe)} (Betriebsausgabe)")
 
 

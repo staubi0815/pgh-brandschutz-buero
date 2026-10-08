@@ -19,20 +19,17 @@ Eingabeformat: siehe vorlagen/beispiel_rechnung.toml. Kundendaten gehören NICHT
 Eingabedateien liegen nur auf dem NAS (bzw. in /tmp beim Erstellen).
 """
 import argparse
-import csv
 import hashlib
-import io
 import os
 import re
 import subprocess
 import sys
 import tempfile
 import tomllib
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from decimal import ROUND_HALF_UP, Decimal
 from html import escape
 from string import Template
-from zoneinfo import ZoneInfo
 
 # E-Rechnung braucht factur-x/pikepdf aus der venv ~/.venvs/pgh – bei Aufruf mit System-Python dorthin wechseln
 VENV = os.path.expanduser("~/.venvs/pgh")
@@ -42,97 +39,28 @@ except ImportError:
     if os.path.exists(os.path.join(VENV, "bin", "python")) and sys.prefix != VENV:
         os.execv(os.path.join(VENV, "bin", "python"), [os.path.join(VENV, "bin", "python")] + sys.argv)
 
-REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-VORLAGEN = os.path.join(REPO, "vorlagen")
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from gemeinsam import (ANGEBOT_KOPF, RECHNUNG_KOPF, REPO, VORLAGEN, Ablage, Buch,  # noqa: E402
+                       angebotsbuch_pfad, betrag_text, dmy, eur, fehler, firma as lade_firma, heute,
+                       jetzt, ku_status, rechnungsbuch_pfad, sauber, werkzeug_version, zahl)
+
 LOGO = os.path.join(REPO, "website", "static", "img", "logo.svg")
 CHROME = os.path.expanduser("~/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome")
-NAS_HOST = "nas"
-NAS_BASIS = "/share/CACHEDEV1_DATA/PGH-Brandschutz"
-TZ = ZoneInfo("Europe/Berlin")
 
 ARTEN = {"material": "Material", "arbeit": "Arbeitsleistung", "fahrt": "Fahrtkosten"}
 KLEINUNTERNEHMER = ("Steuerfreie Leistung als Kleinunternehmer nach § 19 UStG – "
                     "Umsatzsteuer wird daher nicht berechnet.")
 
 KONFIG = {
-    "rechnung": {
-        "titel": "Rechnung", "praefix": "", "buch": "02_Rechnungen/rechnungsausgangsbuch.csv",
-        "entwurf_dir": "02_Rechnungen/Entwuerfe",
-        "kopf": ["Nummer", "Datum", "Kunde", "Betreff", "Betrag", "davon_35a", "Datei", "Quelle_SHA256", "Bezahlt_am"],
-    },
-    "angebot": {
-        "titel": "Angebot", "praefix": "A-", "buch": "07_Kunden/angebotsbuch.csv",
-        "entwurf_dir": "07_Kunden/Entwuerfe",
-        "kopf": ["Nummer", "Datum", "Kunde", "Betreff", "Betrag", "gueltig_bis", "Datei", "Quelle_SHA256", "Status"],
-    },
+    "rechnung": {"titel": "Rechnung", "praefix": "", "buch": rechnungsbuch_pfad, "kopf": RECHNUNG_KOPF,
+                 "entwurf_dir": "02_Rechnungen/Entwuerfe"},
+    "angebot": {"titel": "Angebot", "praefix": "A-", "buch": angebotsbuch_pfad, "kopf": ANGEBOT_KOPF,
+                "entwurf_dir": "07_Kunden/Entwuerfe"},
 }
-
-
-# ---------- Hilfsfunktionen ----------
-def fehler(text):
-    sys.exit(f"FEHLER: {text}")
-
-
-def eur(betrag):
-    s = f"{betrag:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
-    return f"{s} €"
-
-
-def zahl(d):
-    d = Decimal(d)
-    if d == d.to_integral_value():
-        return str(int(d))
-    return f"{d.normalize()}".replace(".", ",")
-
-
-def dmy(d):
-    return d.strftime("%d.%m.%Y")
-
-
-def sauber(text):
-    text = text.replace("ä", "ae").replace("ö", "oe").replace("ü", "ue").replace("ß", "ss")
-    text = text.replace("Ä", "Ae").replace("Ö", "Oe").replace("Ü", "Ue")
-    return re.sub(r"[^A-Za-z0-9_-]+", "_", text).strip("_")[:40] or "Kunde"
 
 
 def offen(text):
     return f'<span class="offen">[OFFEN: {escape(text)}]</span>'
-
-
-# ---------- Ablage: NAS oder lokal ----------
-class Ablage:
-    def __init__(self, lokal=None):
-        self.lokal = lokal
-
-    def _ssh(self, skript, *args, eingabe=None):
-        erg = subprocess.run(["ssh", NAS_HOST, "sh", "-c", f"'{skript}'", "_", *args],
-                             input=eingabe, capture_output=True, timeout=120)
-        if erg.returncode != 0:
-            fehler(f"NAS: {erg.stderr.decode(errors='replace').strip()}")
-        return erg.stdout
-
-    def pfad(self, rel):
-        return os.path.join(self.lokal, rel) if self.lokal else f"{NAS_BASIS}/{rel}"
-
-    def lesen(self, rel):
-        if self.lokal:
-            p = self.pfad(rel)
-            return open(p, "rb").read() if os.path.exists(p) else None
-        out = self._ssh('[ -f "$1" ] && cat "$1" || echo __FEHLT__', self.pfad(rel))
-        return None if out.strip() == b"__FEHLT__" else out
-
-    def schreiben(self, rel, daten, ueberschreiben=False):
-        if self.lokal:
-            p = self.pfad(rel)
-            os.makedirs(os.path.dirname(p), exist_ok=True)
-            if os.path.exists(p) and not ueberschreiben:
-                fehler(f"Datei existiert bereits: {p}")
-            open(p, "wb").write(daten)
-            return p
-        flag = "1" if ueberschreiben else "0"
-        self._ssh('mkdir -p "$(dirname "$1")" && { [ "$2" = 1 ] || [ ! -e "$1" ] || { echo "existiert: $1" >&2; exit 3; }; } '
-                  '&& cat > "$1" && chmod 660 "$1"', self.pfad(rel), flag, eingabe=daten)
-        return self.pfad(rel)
 
 
 # ---------- Daten ----------
@@ -170,22 +98,20 @@ def berechne(d):
     return zeilen, gesamt, anteil_35a
 
 
-def naechste_nummer(buch_csv, praefix, jahr):
+def naechste_nummer(buch, praefix, jahr):
     hoechste = 0
-    if buch_csv:
-        for zeile in csv.DictReader(io.StringIO(buch_csv.decode("utf-8-sig")), delimiter=";"):
-            m = re.fullmatch(rf"{re.escape(praefix)}{jahr}-(\d+)", zeile.get("Nummer", ""))
-            if m:
-                hoechste = max(hoechste, int(m.group(1)))
+    for zeile in buch.zeilen:
+        m = re.fullmatch(rf"{re.escape(praefix)}{jahr}-(\d+)", zeile["Nummer"])
+        if m:
+            hoechste = max(hoechste, int(m.group(1)))
     return f"{praefix}{jahr}-{hoechste + 1:03d}"
 
 
-def schon_erzeugt(buch_csv, sha):
-    if not buch_csv:
-        return None
-    for zeile in csv.DictReader(io.StringIO(buch_csv.decode("utf-8-sig")), delimiter=";"):
-        if zeile.get("Quelle_SHA256") == sha:
-            return zeile.get("Nummer")
+def schon_erzeugt(buecher, sha):
+    for b in buecher:
+        z = b.finde("Quelle_SHA256", sha)
+        if z:
+            return z["Nummer"]
     return None
 
 
@@ -194,7 +120,7 @@ def baue_html(art, d, firma, nummer, entwurf):
     k = KONFIG[art]
     doc = d.get("dokument", {})
     kunde = d["kunde"]
-    datum = date.fromisoformat(doc["datum"]) if doc.get("datum") else datetime.now(TZ).date()
+    datum = date.fromisoformat(doc["datum"]) if doc.get("datum") else heute()
     zeilen, gesamt, anteil_35a = berechne(d)
 
     f = {f"f_{key}": escape(str(val)) for key, val in firma.items()}
@@ -294,10 +220,10 @@ def main():
     ap.add_argument("art", choices=KONFIG)
     ap.add_argument("daten")
     ap.add_argument("--final", action="store_true")
-    ap.add_argument("--lokal")
+    ap.add_argument("--lokal", help="Testmodus: Ablage in lokalem Verzeichnis, Datum darf abweichen")
     a = ap.parse_args()
 
-    firma = tomllib.load(open(os.path.join(VORLAGEN, "firma.toml"), "rb"))
+    firma = lade_firma()
     d, roh = lade(a.daten)
     pruefe_eingabe(d)
     k = KONFIG[a.art]
@@ -307,8 +233,8 @@ def main():
 
     if not a.final:
         html, meta = baue_html(a.art, d, firma, "ENTWURF", entwurf=True)
-        stempel = datetime.now(TZ).strftime("%Y-%m-%d_%H%M")
-        ziel = ablage.schreiben(f"{k['entwurf_dir']}/ENTWURF_{k['titel']}_{kurz}_{stempel}.pdf", pdf_aus_html(html))
+        ziel = ablage.schreiben(f"{k['entwurf_dir']}/ENTWURF_{k['titel']}_{kurz}_{jetzt():%Y-%m-%d_%H%M}.pdf",
+                                pdf_aus_html(html))
         print(f"Entwurf: {ziel}  ({eur(meta['gesamt'])})")
         if a.art == "rechnung":
             import erechnung
@@ -318,6 +244,8 @@ def main():
                 print(f"HINWEIS für die endgültige Rechnung: {exc}")
         return
 
+    # --- Prüfungen vor der endgültigen Erstellung (nichts wird gespeichert, solange eine fehlschlägt) ---
+    version = werkzeug_version(sauber_pflicht=not a.lokal)
     fehlend = [n for n in ("steuernummer", "iban") if not firma.get(n)]
     if a.art == "rechnung" and not d.get("dokument", {}).get("leistungsdatum"):
         fehlend.append("[dokument].leistungsdatum")
@@ -330,13 +258,38 @@ def main():
         except ValueError as exc:
             fehler(str(exc))
 
-    buch = ablage.lesen(k["buch"])
-    vorher = schon_erzeugt(buch, sha)
+    # Ausstellungsdatum = heute (kein Zurückdatieren); abweichend nur im Testmodus --lokal
+    vorgabe = d.get("dokument", {}).get("datum")
+    if vorgabe and not a.lokal and date.fromisoformat(vorgabe) != heute():
+        fehler(f"Ausstellungsdatum muss heute sein ({dmy(heute())}), nicht {vorgabe} – Feld „datum“ weglassen.")
+    datum = date.fromisoformat(vorgabe) if vorgabe else heute()
+
+    buch = Buch(ablage, k["buch"](datum.year), k["kopf"])
+    vorjahr = Buch(ablage, k["buch"](datum.year - 1), k["kopf"])
+    vorher = schon_erzeugt([buch, vorjahr], sha)
     if vorher:
         fehler(f"Diese Eingabedaten wurden bereits als {vorher} erzeugt.")
-    datum = date.fromisoformat(d["dokument"]["datum"]) if d.get("dokument", {}).get("datum") else datetime.now(TZ).date()
+    if buch.zeilen and max(z["Datum"] for z in buch.zeilen) > datum.isoformat():
+        fehler(f"Datum {dmy(datum)} liegt vor dem letzten Eintrag im Buch {datum.year} – Reihenfolge wäre widersprüchlich.")
+
     nummer = naechste_nummer(buch, k["praefix"], datum.year)
     html, meta = baue_html(a.art, d, firma, nummer, entwurf=False)
+    if meta["datum"] != datum:
+        fehler("interner Datumsfehler")
+
+    if a.art == "rechnung":
+        ku = ku_status(ablage, datum.year, zusaetzlich=meta["gesamt"])
+        if not ku["vorjahr_ok"]:
+            fehler(f"Vorjahresumsatz {eur(ku['vorjahr'])} > 25.000 € – Kleinunternehmerregelung gilt {datum.year} nicht mehr. "
+                   "Rechnung mit Umsatzsteuer nötig (Steuerberater).")
+        if ku["erwartet"] > ku["grenze"]:
+            fehler(f"Mit dieser Rechnung würden die Umsätze {datum.year} ({eur(ku['erwartet'])} inkl. offener Rechnungen) "
+                   f"die Kleinunternehmergrenze von {eur(ku['grenze'])} überschreiten – der überschreitende Umsatz ist "
+                   "umsatzsteuerpflichtig. Nicht als Kleinunternehmer-Rechnung erstellen (Steuerberater).")
+        if ku["quote"] >= ku["warnung_ab"]:
+            print(f"WARNUNG Kleinunternehmergrenze: {ku['quote']:.0%} von {eur(ku['grenze'])} erreicht "
+                  f"({eur(ku['erwartet'])} inkl. offener Rechnungen und dieser).")
+
     pdf = pdf_aus_html(html)
     if a.art == "rechnung":
         try:
@@ -349,28 +302,23 @@ def main():
             fehler(f"E-Rechnung nicht gültig – nichts gespeichert, keine Nummer verbraucht. Mustang: {bericht}")
         print("E-Rechnung (ZUGFeRD EN 16931) mit Mustang geprüft: gültig")
 
-    if a.art == "rechnung":
-        ordner = f"02_Rechnungen/{datum.year}"
-    else:
-        ordner = f"07_Kunden/{kurz}"
+    # --- Speichern: PDF, Eingabedaten (mit Werkzeugstand), Buchzeile mit Historie ---
+    ordner = f"02_Rechnungen/{datum.year}" if a.art == "rechnung" else f"07_Kunden/{kurz}"
     pdf_rel = f"{ordner}/{nummer}_{kurz}.pdf"
     ablage.schreiben(pdf_rel, pdf)
-    ablage.schreiben(f"{ordner}/_daten/{nummer}_{kurz}.toml", f"# {k['titel']} {nummer}\n".encode() + roh)
+    kopf = f"# {k['titel']} {nummer} | erzeugt {jetzt():%Y-%m-%d %H:%M} | Werkzeug {version}\n"
+    ablage.schreiben(f"{ordner}/_daten/{nummer}_{kurz}.toml", kopf.encode() + roh)
 
     zeile = {"Nummer": nummer, "Datum": datum.isoformat(), "Kunde": d["kunde"]["name"],
-             "Betreff": d.get("dokument", {}).get("betreff", ""), "Betrag": f"{meta['gesamt']:.2f}".replace(".", ","),
-             "Datei": pdf_rel, "Quelle_SHA256": sha}
+             "Betreff": d.get("dokument", {}).get("betreff", ""), "Betrag": betrag_text(meta["gesamt"]),
+             "Datei": pdf_rel, "Quelle_SHA256": sha, "Werkzeug": version}
     if a.art == "rechnung":
-        zeile.update({"davon_35a": f"{meta['anteil_35a']:.2f}".replace(".", ","), "Bezahlt_am": ""})
+        zeile.update({"davon_35a": betrag_text(meta["anteil_35a"]), "Faellig": meta["faellig"].isoformat(),
+                      "Bezahlt_am": "", "Journal": ""})
     else:
         zeile.update({"gueltig_bis": meta["gueltig"].isoformat(), "Status": "offen"})
-    puffer = io.StringIO()
-    w = csv.DictWriter(puffer, fieldnames=k["kopf"], delimiter=";")
-    if not buch:
-        w.writeheader()
-    w.writerow(zeile)
-    neu = (buch.decode("utf-8-sig") if buch else "") + puffer.getvalue()
-    ablage.schreiben(k["buch"], ("﻿" + neu).encode("utf-8"), ueberschreiben=True)
+    buch.zeilen.append(zeile)
+    buch.speichern(f"{k['titel']} {nummer} angelegt ({eur(meta['gesamt'])})")
     print(f"{k['titel']} {nummer}: {ablage.pfad(pdf_rel)}  ({eur(meta['gesamt'])})")
 
 
