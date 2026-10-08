@@ -20,6 +20,19 @@ Frage Patrick: Kann ich die Auslesung der Melder (Datenbank, Registrierung per Q
 - Walk-by: Funkmodem Michael RAC MBWBlue 700 € einmalig + Software „Rauchwarnmelder-Manager“ ab 40 €/Monat.
 - AES-Schlüsseldatei verschlüsselt, Entschlüsselung über aes.eielectronics.de.
 
+## Nachtrag: QR-Code = Abholschein, nicht der Schlüssel (Patrick liest vor Ort per Walk-by aus)
+- Der QR-Code enthält nicht den AES-Schlüssel, er ordnet die Melder nur dem eigenen Konto im Herstellerportal zu
+  („Closed-Sealed-Letter“); die Schlüssel kommen danach aus dem Konto (Download/REST-API).
+- Ei6500-OMS (Ei Electronics): QR-Code auf der **Umverpackung** (20 Melder) scannen → Melder im Ei-Konto
+  (Freischaltung bis 2 Tage, „Meine Firma/Rest API“ → API-Token); Software wie KAMIN Futura holt die Schlüssel per
+  Token. Vor Ort: Notebook + MBWBLUE (Bluetooth), Melder senden alle 120 s, Nicht-Empfangene → vor Ort prüfen.
+  Quelle: Hottgenroth-Doku „Fernauslese von Rauchwarnmeldern“ (hottgenroth.atlassian.net, DOC 34670358).
+- Sontex SA2: Schlüssel liegen bei Sontex (KeyXchange), nicht bei Ei – Ei-Portal dafür nicht nutzbar (nicht
+  bestätigt, beim Hersteller fragen). Wer das Ei-Konto nutzen will, kauft Ei6500-OMS statt Sontex SA2.
+- Kosten der Konten selbst (Ei-Konto, KeyXchange) nicht veröffentlicht. Rauchwarnmelder-Manager:
+  2022 15 €/Monat bis 1.500 Melder, heute „ab 40 €/Monat“ (Login v2.rwm-software.de).
+- Für Walk-by mit eigener Software: Schlüssel einmal je Lieferung aus dem Portal holen, danach offline auslesen.
+
 ## Selbst betreiben (Proxmox)
 - **wmbusmeters** (GPL, Linux) hat Treiber `ei6500` (Hersteller-Kennung EIE, Typ 0x1A): Alarmzähler/-datum,
   Demontage, Testknopf, Staub, Batterie, Hindernisabstand, Kopfstatus. Empfänger z. B. RTL-SDR oder iM871A.
