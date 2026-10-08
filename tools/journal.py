@@ -256,6 +256,14 @@ def cmd_pruefen(ablage, a):
     for z in journal.zeilen:
         if not ablage.existiert(z["Beleg"]):
             probleme.append(f"{z['Nr']}: Beleg fehlt in der Ablage ({z['Beleg']})")
+    storniert = {z["Storno_von"] for z in journal.zeilen if z["Storno_von"]}
+    gezaehlt = {}
+    for z in journal.zeilen:
+        if z["Art"] == "Ausgabe" and not z["Storno_von"] and z["Nr"] not in storniert:
+            gezaehlt.setdefault(z["Beleg"], []).append(z["Nr"])
+    for beleg, nummern in gezaehlt.items():
+        if len(nummern) > 1:
+            probleme.append(f"Beleg mehrfach als Ausgabe erfasst ({', '.join(nummern)}): {beleg} – doppelt gezählt?")
     nrn = sorted(int(z["Nr"].split("-")[1]) for z in journal.zeilen)
     if nrn and nrn != list(range(1, len(nrn) + 1)):
         probleme.append("Journalnummern nicht lückenlos")

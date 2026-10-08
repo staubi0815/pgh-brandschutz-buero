@@ -142,6 +142,13 @@ class Ablage:
             return
         self._ssh('mkdir -p "$(dirname "$1")" && cat >> "$1" && chmod 660 "$1"', self.pfad(rel), eingabe=daten)
 
+    def ordner(self, rel):
+        """Legt einen Ordner an (Rechte wie die Freigabe)."""
+        if self.lokal:
+            os.makedirs(self.pfad(rel), exist_ok=True)
+            return
+        self._ssh('mkdir -p "$1" && chmod 770 "$1"', self.pfad(rel))
+
     def verschieben(self, alt, neu):
         """Verschiebt ohne zu überschreiben (Ziel darf nicht existieren)."""
         if self.lokal:

@@ -167,6 +167,26 @@ def pruefe_werkzeuge(b):
     b.add("FEHLER" if probleme else "OK", "Werkzeuge: " + ("; ".join(probleme) if probleme else f"vollständig (Stand {v})"))
 
 
+def pruefe_archiv_und_termine(b):
+    """Neue Fassung der Verfahrensdokumentation archivieren; Erinnerungen an die Jahreswechsel-Routine."""
+    r = subprocess.run([VENV_PY, os.path.join(os.path.dirname(os.path.abspath(__file__)), "vd_archiv.py"), "vd"],
+                       capture_output=True, text=True, timeout=300)
+    text = (r.stdout + r.stderr).strip()
+    if r.returncode != 0:
+        b.add("WARNUNG", f"Archiv Verfahrensdokumentation fehlgeschlagen: {text[-150:]}")
+    elif "archiviert:" in text:
+        b.add("INFO", "Neue Fassung der Verfahrensdokumentation archiviert")
+    else:
+        b.add("OK", "Verfahrensdokumentation: aktuelle Fassung archiviert")
+    ablage, t = Ablage(), heute()
+    if t.month == 12 and t.day >= 20 and not ablage.existiert(f"01_Ausgaben/{t.year + 1}"):
+        b.add("WARNUNG", f"Jahreswechsel vorbereiten: tools/jahreswechsel.py vorbereiten --jahr {t.year + 1}")
+    if t.month == 1 and t.day >= 20:
+        berichte = [r for r, _ in ablage.dateien(f"06_Steuer/{t.year - 1}") if "jahreswechsel_pruefung" in r]
+        if not berichte:
+            b.add("WARNUNG", f"Jahresabschluss {t.year - 1} fehlt: tools/jahreswechsel.py abschluss --jahr {t.year - 1}")
+
+
 def mail(b, betreff):
     e = dict(z.strip().split("=", 1) for z in open(ENV) if "=" in z)
     zeilen = [f"Kontrolle PGH-Brandschutz vom {jetzt():%d.%m.%Y %H:%M}", ""]
@@ -192,7 +212,7 @@ def main():
     ap.add_argument("--immer-mail", action="store_true")
     a = ap.parse_args()
     b = Befund()
-    for pruefung in (pruefe_nas, pruefe_belege_abholung, pruefe_buchhaltung, pruefe_werkzeuge):
+    for pruefung in (pruefe_nas, pruefe_belege_abholung, pruefe_buchhaltung, pruefe_werkzeuge, pruefe_archiv_und_termine):
         try:
             pruefung(b)
         except SystemExit as exc:      # fehler() aus gemeinsam.py
