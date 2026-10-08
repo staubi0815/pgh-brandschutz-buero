@@ -45,7 +45,7 @@ Rauchmelder-Wartung nach DIN 14676 erst nach Fachkraft-Lehrgang.
 | Dieses Repo (Anleitung, Website-Quelltext, Vorlagen, Skripte) | GitHub `staubi0815/pgh-brandschutz-buero`, Klon `/home/claude/repos/pgh-brandschutz-buero` | angelegt 2026-10-06 |
 | Domain + Webhosting + Mail | Hetzner Webhosting S, `pgh-brandschutz.de` | aktiv (2026-10-06) |
 | Website | statisch, `website/` (siehe unten) | Entwurf fertig, **nicht online** |
-| Mail | `info@` (Kunden), `belege@` (Belegeingang: `tools/belege_abholen.py` per Cron alle 15 min auf LXC 191 → NAS `00_Eingang`, Mail danach in IMAP-Ordner `Abgeholt`; Log `~/.local/state/pgh-brandschutz/belege.log`) | aktiv 2026-10-06 |
+| Mail | `info@` (Kunden), `belege@` (Belegeingang: `tools/belege_abholen.py` per Cron alle 15 min auf LXC 191 → NAS `00_Eingang`, Mail danach in IMAP-Ordner `Abgeholt`; Log `~/.local/state/pgh-brandschutz/belege.log`); Archiv info@: `tools/mail_archivieren.py` per Cron täglich 00:15 UTC → NAS `09_Korrespondenz/<Jahr>` (.eml, nur lesend) | aktiv 2026-10-06, Archiv seit 2026-10-08 |
 | Datenablage | NAS QNAP, Freigabe `PGH-Brandschutz` (`\\192.168.178.40\PGH-Brandschutz`, per SSH `/share/CACHEDEV1_DATA/PGH-Brandschutz`), nur Administratoren. Struktur + Benennung siehe `LIESMICH.txt` dort | angelegt 2026-10-06 |
 | Außer-Haus-Sicherung | Container `rclone-hetzner` auf dem NAS: täglich 02:30 verschlüsselt nach `hetzner-crypt-pgh:aktuell`, Gelöschtes/Geändertes nach `archiv/<Zeitstempel>` – **Archiv nie löschen**. Details: homelab-infra `infra/nas-qnap.md` | aktiv 2026-10-06 |
 | Rechnungen, Angebote, Fahrtenliste | `tools/dokument.py`, `tools/fahrten.py`, Vorlagen in `vorlagen/`; Ergebnisse + Bücher je Jahr auf dem NAS | fertig; endgültige Rechnungen erst mit Steuernummer + IBAN |

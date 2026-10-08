@@ -128,7 +128,11 @@ Täglich: Sicherung (verschlüsselt, Hetzner) + Kontrolle (Mail bei Problemen)
 
 ### 2.8 Korrespondenz
 Geschäftsbriefe (auch E-Mails, Angebote, Auftragsbestätigungen) sind 6 Jahre aufzubewahren, als Buchungsbeleg 8 Jahre.
-Mails in info@ werden bis zur Einrichtung der automatischen Archivierung im Postfach (Hetzner) aufbewahrt und nicht gelöscht.
+Seit 08.10.2026 archiviert `tools/mail_archivieren.py` (Cron LXC 191, täglich 00:15 UTC, also vor der Nachtsicherung) alle
+Mails von info@ – empfangen und gesendet, alle Ordner außer Spam/Entwürfe, auch Papierkorb – unverändert als `.eml` nach
+`09_Korrespondenz/<Jahr>/eingang|ausgang/` (Name `JJJJ-MM-TT_HHMM_<Partner>_<Betreff>_<Prüfsumme>.eml`). Das Postfach wird
+nur gelesen; jede Mail wird über die SHA-256-Prüfsumme genau einmal abgelegt, nichts überschrieben. Protokoll
+`06_Steuer/<Jahr>/protokolle/mailarchiv_<Jahr>.log`. Mails im Postfach trotzdem nicht vorschnell löschen.
 
 ### 2.9 Monats- und Jahresabschluss
 - **Monatlich:** Kontoauszug ablegen, Abgleich, `journal.py pruefen`, offene Rechnungen nachverfolgen.
@@ -162,6 +166,7 @@ Mails in info@ werden bis zur Einrichtung der automatischen Archivierung im Post
 | 06_Steuer/<Jahr> | Journal, GWG-Verzeichnis, Protokolle, Steuererklärungen, Bescheide, Verfahrensdokumentation | CSV, LOG, PDF |
 | 07_Kunden/<Kunde> | Angebote, Montage-/Wartungsprotokolle, Korrespondenz; `angebotsbuch_<Jahr>.csv` | PDF, CSV |
 | 08_Nachweise | Qualifikationen, Zertifikate | PDF |
+| 09_Korrespondenz/<Jahr> | Mail-Archiv info@ (`eingang/`, `ausgang/`), automatisch | EML |
 
 **Bücher (CSV):** UTF-8 mit BOM, Trennzeichen Semikolon, Dezimalkomma, feste Kopfzeile. Sie werden nur von den
 Werkzeugen geschrieben; vor jeder Änderung wird die bisherige Fassung nach `<Ordner>/_historie/` kopiert und die
@@ -218,7 +223,7 @@ Werkzeugstands; endgültige Rechnungen nur aus eingechecktem Stand. Der vollstä
 Technische Details: homelab-infra `infra/nas-qnap.md`, `infra/lxc-191-claude-code.md`.
 
 ### 4.2 Kontrolle
-`tools/kontrolle.py` läuft täglich (07:15 Uhr Sommerzeit) und prüft Sicherungen, RAID, Speicher, Belegabholung,
+`tools/kontrolle.py` läuft täglich (07:15 Uhr Sommerzeit) und prüft Sicherungen, RAID, Speicher, Belegabholung, Mailarchiv,
 `00_Eingang`, überfällige Rechnungen, Kleinunternehmergrenze und Werkzeuge. Bei Fehlern/Warnungen Mail an info@,
 montags immer Wochenbericht (bleibt er aus, läuft die Kontrolle nicht). Log `~/.local/state/pgh-brandschutz/kontrolle.log`.
 

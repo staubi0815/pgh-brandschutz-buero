@@ -42,7 +42,7 @@
 
 ## Offen (nächste Schritte)
 1. Nach Lehrgang DIN 14676 (KW 42): Wartungs-Texte + Qualifikation freischalten (3 `[OFFEN]`-Stellen), Vorschau, Freigabe Patrick → `website/deploy.sh`.
-2. Passwörter: info@ + FritzBox-Login von Patrick geändert (07.10.2026, altes info@-PW abgelehnt = geprüft). Neues info@-PW im FritzBox-Push-Absender hat Patrick selbst eingetragen (08.10.2026). FTP- und Storage-Box-Passwort laut Patrick geändert (08.10.2026) – FTP unkritisch (Deploy nutzt SSH-Schlüssel). **Aber:** Storage Box nahm am 08.10. 17:20 das alte Passwort aus `rclone.conf` noch an → vermutlich nur Console-Login geändert. Beim echten Wechsel (Storage Box → Aktionen → Passwort zurücksetzen) neues PW per Datei an Claude → `rclone.conf` auf dem NAS anpassen, sonst fällt die Nachtsicherung aus. Crypt-PW bleibt (Daten nur mit Box-Login erreichbar).
+2. Passwörter: info@, FritzBox-Login, FTP und Storage Box von Patrick geändert (07./08.10.2026). Neues Storage-Box-PW am 08.10. in `rclone.conf` auf dem NAS eingetragen (Test + Sync-Lauf ok). Patrick: neues Storage-Box-PW in Zugang.txt/Notfall-Anleitung nachtragen, `StorageBox.txt` in Drive löschen.
 3. Fragebogen zur steuerlichen Erfassung (ELSTER) – Frist 1 Monat ab 11.10.2026.
 4. Berufsgenossenschaft-Meldung, Betriebshaftpflicht, ggf. Nebentätigkeitsgenehmigung.
 5. Nach Go-Live: Google-Unternehmensprofil (Servicegebiet, Adresse ausgeblendet), Bing Places, Search Console/Bing Webmaster, Das Örtliche/Gelbe Seiten.
@@ -52,9 +52,8 @@
 9. Prüfbericht Phase 4:
    - Snapshots: Empfehlung an Patrick (08.10.): automatisch, wöchentlich Mi 00:30 (vor Foto-Sync 01:00), 10 behalten
      (≈ 10 Wochen), „Snapshot-Verzeichnis anzeigen“ an (Einzeldatei-Wiederherstellung über `/.zfs/snapshot`).
-   - info@-Archiv: `tools/mail_archivieren.py` fertig + getestet (Trockenlauf 12 Mails, lokaler Test: Prüfsummen ok,
-     zweiter Lauf 0 neu). **Wartet auf OK von Patrick** für neuen NAS-Ordner `09_Korrespondenz` + Cron täglich 02:00
-     → dann LIESMICH, Verfahrensdoku, Kontrolle (`kontrolle.py`) ergänzen.
+   - info@-Archiv: **aktiv seit 08.10.2026** (`tools/mail_archivieren.py`, Cron 00:15 UTC → `09_Korrespondenz`, erste
+     12 Mails archiviert, Kontrolle überwacht). LIESMICH + Verfahrensdoku ergänzt.
    - Datenschutz: Entscheidung Patrick – Kundendaten bleiben lokal, nicht im Chat (CLAUDE.md Grundsatz 6). Offen:
      VVT + Löschkonzept (Claude entwirft), AV-Vertrag Hetzner auch für Storage Box (Hetzner Console) prüfen (Patrick).
 10. Werkzeug für Stornorechnung (Typ 381) vor der ersten Korrektur bauen.

@@ -27,6 +27,7 @@ from gemeinsam import (RECHNUNG_KOPF, TZ, Ablage, Buch, eur, firma, heute, jetzt
 
 ENV = os.path.expanduser("~/.config/pgh-brandschutz/belege.env")
 BELEGE_LOG = os.path.expanduser("~/.local/state/pgh-brandschutz/belege.log")
+MAIL_LOG = os.path.expanduser("~/.local/state/pgh-brandschutz/mailarchiv.log")
 VENV_PY = os.path.expanduser("~/.venvs/pgh/bin/python")
 CHROME = os.path.expanduser("~/.cache/ms-playwright/chromium-1243/chrome-linux64/chrome")
 MUSTANG = os.path.expanduser("~/tools/mustang/Mustang-CLI-2.26.0.jar")
@@ -128,6 +129,24 @@ def pruefe_belege_abholung(b):
         b.add("FEHLER", f"Belege-Postfach nicht prüfbar: {exc}")
 
 
+def pruefe_mailarchiv(b):
+    """Letzter Lauf von mail_archivieren.py (Cron täglich 01:40) muss jünger als 26 h und fehlerfrei sein."""
+    letzte = None
+    if os.path.exists(MAIL_LOG):
+        for z in open(MAIL_LOG, encoding="utf-8", errors="replace"):
+            if "Ende Mailarchiv" in z and "DRY-RUN" not in z:
+                letzte = z.strip()
+    m = re.match(r"(\d{4}-\d\d-\d\d \d\d:\d\d:\d\d) .*Exit-Code (\d+)", letzte or "")
+    if not m:
+        b.add("FEHLER", "info@-Mailarchiv: noch kein Lauf im Log")
+        return
+    alter = (jetzt() - datetime.strptime(m.group(1), "%Y-%m-%d %H:%M:%S").replace(tzinfo=TZ)).total_seconds() / 3600
+    if alter > 26 or m.group(2) != "0":
+        b.add("FEHLER", f"info@-Mailarchiv: letzter Lauf vor {alter:.0f} h, Exit-Code {m.group(2)}")
+    else:
+        b.add("OK", f"info@-Mailarchiv: {letzte[20:].split(', Exit')[0].replace('Ende Mailarchiv: ', '')}")
+
+
 def pruefe_buchhaltung(b):
     ablage = Ablage()
     jahr = heute().year
@@ -212,7 +231,8 @@ def main():
     ap.add_argument("--immer-mail", action="store_true")
     a = ap.parse_args()
     b = Befund()
-    for pruefung in (pruefe_nas, pruefe_belege_abholung, pruefe_buchhaltung, pruefe_werkzeuge, pruefe_archiv_und_termine):
+    for pruefung in (pruefe_nas, pruefe_belege_abholung, pruefe_mailarchiv, pruefe_buchhaltung, pruefe_werkzeuge,
+                     pruefe_archiv_und_termine):
         try:
             pruefung(b)
         except SystemExit as exc:      # fehler() aus gemeinsam.py
