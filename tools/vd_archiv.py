@@ -55,7 +55,7 @@ def archiv_vd(ablage):
         hp, pp = os.path.join(tmp, "vd.html"), os.path.join(tmp, "vd.pdf")
         open(hp, "w", encoding="utf-8").write(f"<!DOCTYPE html><html lang='de'><head><meta charset='utf-8'>"
                                               f"<style>{CSS}</style></head><body>{kopf}{html}</body></html>")
-        subprocess.run([CHROME, "--headless=new", "--disable-gpu", f"--print-to-pdf={pp}", f"file://{hp}"],
+        subprocess.run([CHROME, "--headless=new", "--disable-gpu", "--no-pdf-header-footer", f"--print-to-pdf={pp}", f"file://{hp}"],
                        capture_output=True, timeout=120, check=True)
         ziel = ablage.schreiben(f"{ordner}/VD_{datum}_{h}.pdf", open(pp, "rb").read())
     print(f"Verfahrensdokumentation archiviert: {ziel}")
