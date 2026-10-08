@@ -55,3 +55,7 @@
     (kundendienst@eielectronics.de, Konto/AES-Schlüssel/Datenpunkte/Empfänger/Bezug) am 08.10.2026 aus info@ gesendet,
     Kopie in INBOX.Sent → Antwort abwarten, dann über Eigenbau (wmbusmeters) oder Ei-Software entscheiden.
     info@-Zugang liegt jetzt in `~/.config/pgh-brandschutz/info.env` (600) – nutzbar auch für info@-Archivierung (Punkt 9).
+12. Eigene Prüfsoftware nach Vorbild Foxtag (Web zuerst, dann App): Stufe 1 Grobstruktur fertig
+    (`docs/nachbau-foxtag/01-grobstruktur.md`, 08.10.2026). Foxtag-Testkonto (info@, Zugang
+    `~/.config/pgh-brandschutz/foxtag.env`) läuft bis ca. 08.11.2026 – darin Vorlagen „Rauchwarnmelder“ + „(EFH)“
+    mit Demo-Anlagen angelegt. Nächste Stufe: Datenmodell und Masken im Detail. Patrick: `Info-Foxtac.txt` in Drive löschen.
