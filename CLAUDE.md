@@ -44,47 +44,55 @@ Rauchmelder-Wartung nach DIN 14676 erst nach Fachkraft-Lehrgang.
 | Mail | `info@` (Kunden), `belege@` (Belegeingang: `tools/belege_abholen.py` per Cron alle 15 min auf LXC 191 → NAS `00_Eingang`, Mail danach in IMAP-Ordner `Abgeholt`; Log `~/.local/state/pgh-brandschutz/belege.log`) | aktiv 2026-10-06 |
 | Datenablage | NAS QNAP, Freigabe `PGH-Brandschutz` (`\\192.168.178.40\PGH-Brandschutz`, per SSH `/share/CACHEDEV1_DATA/PGH-Brandschutz`), nur Administratoren. Struktur + Benennung siehe `LIESMICH.txt` dort | angelegt 2026-10-06 |
 | Außer-Haus-Sicherung | Container `rclone-hetzner` auf dem NAS: täglich 02:30 verschlüsselt nach `hetzner-crypt-pgh:aktuell`, Gelöschtes/Geändertes nach `archiv/<Zeitstempel>` – **Archiv nie löschen**. Details: homelab-infra `infra/nas-qnap.md` | aktiv 2026-10-06 |
-| Rechnungen, Angebote, Fahrtenliste | `tools/dokument.py`, `tools/fahrten.py`, Vorlagen in `vorlagen/`; Ergebnisse + Bücher auf dem NAS | Werkzeuge fertig 2026-10-06; endgültige Rechnungen erst mit Steuernummer + IBAN |
-| EÜR / Einnahmen-Ausgaben-Auswertung | auf NAS | offen |
+| Rechnungen, Angebote, Fahrtenliste | `tools/dokument.py`, `tools/fahrten.py`, Vorlagen in `vorlagen/`; Ergebnisse + Bücher je Jahr auf dem NAS | fertig; endgültige Rechnungen erst mit Steuernummer + IBAN |
+| Journal (EÜR), GWG-Verzeichnis, Einsortieren | `tools/journal.py`, `tools/einsortieren.py` → `06_Steuer/<Jahr>/` | fertig 2026-10-08 |
+| Kontrolle, Jahreswechsel, Verfahrensdoku | `tools/kontrolle.py` (Cron täglich), `tools/jahreswechsel.py`, `docs/verfahrensdokumentation.md` + `tools/vd_archiv.py` | fertig 2026-10-08 |
 | Paperless-ngx / Telegram-Bot | bewusst zurückgestellt | später |
 
 ## Arbeitsabläufe
 
-Alle Werkzeuge laufen hier auf LXC 191 und schreiben per `ssh nas` in die Freigabe
-`/share/CACHEDEV1_DATA/PGH-Brandschutz`. Kundendaten nie ins Repo – Eingabedateien nur in `/tmp` und auf dem NAS.
+**Maßgeblich ist `docs/verfahrensdokumentation.md`** (GoBD) – Abläufe dort ändern, wenn sie sich ändern (wird
+automatisch als PDF auf dem NAS archiviert). Alle Werkzeuge laufen auf LXC 191 und schreiben per `ssh nas` in
+`/share/CACHEDEV1_DATA/PGH-Brandschutz`; Testmodus jeweils `--lokal <Verzeichnis>`. Kundendaten nie ins Repo.
+**Bücher (CSV) nie von Hand ändern** – nur über die Werkzeuge (Vorversion + Protokoll in `_historie/`).
+Endgültige Rechnungen nur aus eingechecktem Werkzeugstand → Änderungen an `tools/`/`vorlagen/` sofort testen + committen.
+
+### Belege einsortieren und erfassen (zeitnah, spätestens 10 Tage)
+1. `tools/einsortieren.py liste` – Dateien ansehen (Lesbarkeit/Vollständigkeit prüfen, sonst Patrick um neues Foto bitten).
+2. `tools/einsortieren.py <Datei> 01_Ausgaben/<Jahr> --name JJJJ-MM-TT_Firma_Betrag_Text` (Kontoauszüge → `03_Bank/<Jahr>`,
+   Verträge → `05_Vertraege`, Steuer → `06_Steuer/<Jahr>`, Nachweise → `08_Nachweise`). Inhalt/Endung bleiben unverändert.
+3. `tools/journal.py ausgabe --datum <Zahlungsdatum> --betrag … --an … --text … --kategorie … --zahlweg bank|privat|bar
+   --beleg <Pfad>` (Kategorien: `journal.py kategorien`; GWG 250–800 € netto → `gwg`, landet im GWG-Verzeichnis;
+   ohne Fremdbeleg `--eigenbeleg "Grund"`). Unklares in `00_Eingang` lassen und Patrick fragen.
+
+### Zahlungseingang
+`tools/journal.py einnahme --datum <Zahlungsdatum> --betrag … --rechnung <Nr> [--teilzahlung]` → setzt „bezahlt am“.
+Fehler korrigieren: `journal.py storno <Nr> --grund …` (+ neuer Eintrag). Monatlich: Kontoauszug ablegen, mit Journal
+abgleichen, `journal.py pruefen`. Auswertung: `journal.py auswertung --jahr <J>`.
 
 ### Rechnung / Angebot schreiben
-1. Angaben von Patrick sammeln: Kunde (Name, Anschrift, Kurzname), Objekt, Leistungsdatum, Positionen mit Menge/Preis/Art
-   (`material`, `arbeit`, `fahrt` – Arbeit+Fahrt ergeben den § 35a-Anteil). Format: `vorlagen/beispiel_rechnung.toml`.
-2. Eingabe als `/tmp/<kurz>.toml` schreiben, **Entwurf** erzeugen: `tools/dokument.py rechnung /tmp/<kurz>.toml`
-   → `02_Rechnungen/Entwuerfe/` (Angebot: `07_Kunden/Entwuerfe/`). Kontrollbild: `pdftoppm -png -r 80 <pdf> /tmp/x`.
-3. Patrick prüft den Entwurf (NAS). **Erst nach seiner Freigabe**: `… --final` → fortlaufende Nummer
-   (`2026-001` bzw. `A-2026-001`), PDF nach `02_Rechnungen/<Jahr>/` bzw. `07_Kunden/<kurz>/`, Eingabe unter `_daten/`,
-   Zeile in `02_Rechnungen/rechnungsausgangsbuch.csv` bzw. `07_Kunden/angebotsbuch.csv`. Entwurf danach löschen.
-   Endgültige Rechnungen sind automatisch **E-Rechnungen** (ZUGFeRD/Factur-X, Profil EN 16931, `tools/erechnung.py`):
-   XML im PDF, vor dem Speichern mit Mustang geprüft – ungültig ⇒ nichts gespeichert, keine Nummer verbraucht.
-   Leistungsdatum dafür strikt `TT.MM.JJJJ` oder `TT.MM.JJJJ - TT.MM.JJJJ`. Optional im `[kunde]`-Block:
-   `lieferantennummer` (meine Nummer beim Kunden, BT-29; sonst Steuernummer) und `email` (Rechnungsadresse).
-   Voraussetzungen auf LXC 191: venv `~/.venvs/pgh` (factur-x, pikepdf – `dokument.py` wechselt selbst hinein),
-   Java 17 + `~/tools/mustang/Mustang-CLI-2.26.0.jar`.
-4. Rechnungen werden nie geändert oder gelöscht. Fehler → Stornorechnung (negative Beträge, Bezug auf Original-Nr.) + neue Rechnung.
-5. Zahlungseingang: im Ausgangsbuch Spalte `Bezahlt_am` eintragen (Kontoauszug in `03_Bank/<Jahr>/`).
+1. Angaben von Patrick: Kunde (Name, Anschrift, Kurzname), Objekt, Leistungsdatum, Positionen mit Menge/Preis/Art
+   (`material`, `arbeit`, `fahrt` – Arbeit+Fahrt = § 35a-Anteil). Format: `vorlagen/beispiel_rechnung.toml`; Feld `datum` weglassen.
+2. Eingabe als `/tmp/<kurz>.toml`, **Entwurf**: `tools/dokument.py rechnung /tmp/<kurz>.toml` → `02_Rechnungen/Entwuerfe/`
+   (Angebot: `07_Kunden/Entwuerfe/`). Kontrollbild: `pdftoppm -png -r 80 <pdf> /tmp/x`.
+3. **Erst nach Freigabe durch Patrick**: `… --final` → Ausstellungsdatum heute, nächste Nummer (`2026-001`/`A-2026-001`),
+   E-Rechnung (ZUGFeRD EN 16931, Mustang-geprüft), Prüfung Kleinunternehmergrenze, PDF + `_daten/` (mit Werkzeugstand),
+   Zeile in `02_Rechnungen/rechnungsausgangsbuch_<Jahr>.csv` bzw. `07_Kunden/angebotsbuch_<Jahr>.csv`. Entwurf danach löschen.
+   Leistungsdatum strikt `TT.MM.JJJJ` oder `TT.MM.JJJJ - TT.MM.JJJJ`. Optional `[kunde]`: `lieferantennummer`, `email`.
+4. Rechnungen nie ändern/löschen. Fehler → Stornorechnung (Werkzeug noch offen – bis dahin nicht ohne Rücksprache).
 
-Rechtsgrundlage Pflichtangaben: § 34a UStDV (Kleinunternehmer, seit 2025) – Name/Anschrift beider Seiten, **Steuernummer**
-(oder USt-IdNr/Kleinunternehmer-IdNr), Ausstellungsdatum, Menge/Art bzw. Umfang/Art, Entgelt + Hinweis auf § 19 UStG.
-Kleinunternehmer dürfen immer als PDF („sonstige Rechnung“) schicken (§ 34a Satz 3 UStDV) – die E-Rechnung ist freiwillig
-(Wunsch Patrick 07.10.2026), Pflicht erst bei Wegfall der Kleinunternehmerregelung (B2B ab 2028). `dokument.py --final`
-bricht ab, solange `steuernummer`/`iban` in `vorlagen/firma.toml` leer sind.
+Rechtsgrundlage Pflichtangaben: § 34a UStDV (Kleinunternehmer, seit 2025) – u. a. **Steuernummer**, § 19-Hinweis;
+PDF immer zulässig, E-Rechnung freiwillig (Wunsch Patrick). `--final` bricht ab, solange `steuernummer`/`iban` in
+`vorlagen/firma.toml` leer sind. Voraussetzungen: venv `~/.venvs/pgh`, Java 17, `~/tools/mustang/Mustang-CLI-2.26.0.jar`.
 
 ### Fahrt eintragen
 `tools/fahrten.py eintragen --datum JJJJ-MM-TT --ziel "…" --zweck "…" --einfach <km>` (Hin+Rück) oder `--km <gesamt>`.
-Liste: `04_Fahrten/<Jahr>/fahrten_<Jahr>.csv` (0,30 €/km aus `firma.toml`). Summe: `tools/fahrten.py summe --jahr <J>`.
 
-### Belege einsortieren
-Neue Dateien in `00_Eingang` (von `belege@` oder Patrick) ansehen, umbenennen nach
-`JJJJ-MM-TT_Firma_Betrag_Beschreibung.<ext>` und verschieben: Ausgaben → `01_Ausgaben/<Jahr>/`, Kontoauszüge →
-`03_Bank/<Jahr>/`, Verträge/Versicherung → `05_Vertraege/`, Steuer → `06_Steuer/<Jahr>/`, Zertifikate → `08_Nachweise/`.
-Unklare Belege in `00_Eingang` lassen und Patrick fragen. Nichts löschen.
+### Kontrolle und Jahreswechsel
+- `tools/kontrolle.py` läuft täglich 05:15 UTC per Cron (Mail an info@ bei Problemen, montags Wochenbericht).
+  Von Hand: `tools/kontrolle.py --keine-mail`.
+- Ende Dezember `tools/jahreswechsel.py vorbereiten --jahr <neu>`, zweite Januarhälfte
+  `tools/jahreswechsel.py abschluss --jahr <alt>` (Bericht in `06_Steuer/<alt>/`). Die Kontrolle erinnert daran.
 
 ## Website (`website/`)
 

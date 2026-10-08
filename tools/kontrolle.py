@@ -155,7 +155,7 @@ def pruefe_werkzeuge(b):
         probleme.append("Mustang-Validator fehlt")
     if not shutil.which("java"):
         probleme.append("Java fehlt")
-    r = subprocess.run([VENV_PY, "-c", "import facturx, pikepdf, piper"], capture_output=True)
+    r = subprocess.run([VENV_PY, "-c", "import facturx, pikepdf, piper, scipy, markdown"], capture_output=True)
     if r.returncode != 0:
         probleme.append("venv ~/.venvs/pgh unvollständig")
     v = werkzeug_version()
