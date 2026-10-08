@@ -202,7 +202,7 @@ class Buch:
         ordner, name = os.path.split(self.rel)
         stempel = jetzt()
         if self._roh:  # vorherige Fassung sichern, bevor sie überschrieben wird
-            self.ablage.schreiben(f"{ordner}/_historie/{os.path.splitext(name)[0]}_{stempel:%Y%m%d-%H%M%S}.csv", self._roh)
+            self.ablage.schreiben(f"{ordner}/_historie/{os.path.splitext(name)[0]}_{stempel:%Y%m%d-%H%M%S-%f}.csv", self._roh)
         self.ablage.schreiben(self.rel, neu, ueberschreiben=True)
         self.ablage.anhaengen(f"{ordner}/_historie/aenderungen.log",
                               f"{stempel:%Y-%m-%d %H:%M:%S} | {name} | {aktion} | Werkzeug {werkzeug_version()}\n")
