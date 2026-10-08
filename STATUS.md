@@ -37,6 +37,7 @@
 - Vorlagen + Werkzeuge (06.10.2026): `tools/dokument.py` (Rechnung/Angebot, Entwurf/final, Ausgangsbücher), `tools/fahrten.py` (Fahrtenliste 0,30 €/km), Layout DIN 5008. Getestet lokal + NAS. Endgültige Rechnungen erst, wenn Steuernummer (Pflicht nach § 34a UStDV) und IBAN in `vorlagen/firma.toml` stehen.
 - E-Rechnung (07.10.2026, Wunsch Patrick, freiwillig): endgültige Rechnungen = ZUGFeRD/Factur-X EN 16931 (Kategorie E, § 19-Befreiungsgrund, Steuernummer BT-32, Verkäuferkennung BT-29), Prüfung mit Mustang 2.26.0 vor dem Speichern. Getestet: Einzeltag, Zeitraum, Lieferantennummer gültig; mehrdeutiges Leistungsdatum wird abgelehnt.
 - AB-Ansage (07.10.2026): FritzBox-TTS klingt schlecht (Patrick). Neu: `tools/ansage.py` (Piper, lokal, Stimmen in `~/tools/piper-voices`; Thorsten/Kerstin CC0, Karlsson/Ramona M-AILABS mit Quellenangabe) → WAV 8 kHz mono 16 bit für FritzBox-Upload. Aussprache: „P G H“, „Gehr-häuser“ (langes e). Fix: abgetrenntes Kombinationszeichen im Laut ç („ich“) wird zusammengesetzt. 7 Hörproben an info@ geschickt – Auswahl durch Patrick offen.
+- Prüfbericht 08.10.2026: `docs/pruefbericht-2026-10-08.md` (Rechtsrahmen, Bestandsaufnahme, Restore-Test ok, Jahreswechsel-Simulation, Datenschutz, 26 Befunde A/B/C, Maßnahmenplan in 4 Phasen). Umsetzung wartet auf Patricks Freigabe.
 
 ## Offen (nächste Schritte)
 1. Nach Lehrgang DIN 14676 (KW 42): Wartungs-Texte + Qualifikation freischalten (3 `[OFFEN]`-Stellen), Vorschau, Freigabe Patrick → `website/deploy.sh`.
