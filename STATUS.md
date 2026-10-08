@@ -42,14 +42,21 @@
 
 ## Offen (nächste Schritte)
 1. Nach Lehrgang DIN 14676 (KW 42): Wartungs-Texte + Qualifikation freischalten (3 `[OFFEN]`-Stellen), Vorschau, Freigabe Patrick → `website/deploy.sh`.
-2. Passwörter: info@ + FritzBox-Login von Patrick geändert (07.10.2026, altes info@-PW abgelehnt = geprüft). Neues info@-PW im FritzBox-Push-Absender hat Patrick selbst eingetragen (08.10.2026). Noch offen: FTP-Passwort (konsoleH) und Storage-Box-Passwort (= Crypt-PW, stand im Chat) ändern.
+2. Passwörter: info@ + FritzBox-Login von Patrick geändert (07.10.2026, altes info@-PW abgelehnt = geprüft). Neues info@-PW im FritzBox-Push-Absender hat Patrick selbst eingetragen (08.10.2026). FTP- und Storage-Box-Passwort laut Patrick geändert (08.10.2026) – FTP unkritisch (Deploy nutzt SSH-Schlüssel). **Aber:** Storage Box nahm am 08.10. 17:20 das alte Passwort aus `rclone.conf` noch an → vermutlich nur Console-Login geändert. Beim echten Wechsel (Storage Box → Aktionen → Passwort zurücksetzen) neues PW per Datei an Claude → `rclone.conf` auf dem NAS anpassen, sonst fällt die Nachtsicherung aus. Crypt-PW bleibt (Daten nur mit Box-Login erreichbar).
 3. Fragebogen zur steuerlichen Erfassung (ELSTER) – Frist 1 Monat ab 11.10.2026.
 4. Berufsgenossenschaft-Meldung, Betriebshaftpflicht, ggf. Nebentätigkeitsgenehmigung.
 5. Nach Go-Live: Google-Unternehmensprofil (Servicegebiet, Adresse ausgeblendet), Bing Places, Search Console/Bing Webmaster, Das Örtliche/Gelbe Seiten.
 6. Steuernummer (nach Fragebogen) und IBAN (ING-Geschäftskonto) in `vorlagen/firma.toml` eintragen → dann sind endgültige Rechnungen möglich.
 7. AB-Ansage: Patrick wählt Hörprobe (Nr. + langes/kurzes e) → WAV in FritzBox hochladen (Telefonie → Anrufbeantworter → PGH-Brandschutz → Einstellungen → Ansage ändern → Eigene Ansage → Datei hochladen). Falls Qualität nicht reicht: Azure-Neural-TTS (eigenes Konto, Free Tier) oder Profi-Sprecher.
 8. Patrick: Belege der Anlaufkosten an belege@ (Bohrhammer, Leiter, Domain/Hosting, Gewerbeanmeldung, Lehrgang DIN 14676, Fahrten) → Claude sortiert ein und erfasst im Journal (privat bezahlt).
-9. Prüfbericht Phase 4 (braucht Patrick): Storage-Box-Snapshots in der Hetzner Console, Storage-Box- und FTP-Passwort ändern, info@-Archivierung (neues info@-Passwort per Datei), Datenschutz (VVT, Löschkonzept, Claude-Abo/AV-Vertrag, AV Hetzner Storage Box).
+9. Prüfbericht Phase 4:
+   - Snapshots: Empfehlung an Patrick (08.10.): automatisch, wöchentlich Mi 00:30 (vor Foto-Sync 01:00), 10 behalten
+     (≈ 10 Wochen), „Snapshot-Verzeichnis anzeigen“ an (Einzeldatei-Wiederherstellung über `/.zfs/snapshot`).
+   - info@-Archiv: `tools/mail_archivieren.py` fertig + getestet (Trockenlauf 12 Mails, lokaler Test: Prüfsummen ok,
+     zweiter Lauf 0 neu). **Wartet auf OK von Patrick** für neuen NAS-Ordner `09_Korrespondenz` + Cron täglich 02:00
+     → dann LIESMICH, Verfahrensdoku, Kontrolle (`kontrolle.py`) ergänzen.
+   - Datenschutz: Entscheidung Patrick – Kundendaten bleiben lokal, nicht im Chat (CLAUDE.md Grundsatz 6). Offen:
+     VVT + Löschkonzept (Claude entwirft), AV-Vertrag Hetzner auch für Storage Box (Hetzner Console) prüfen (Patrick).
 10. Werkzeug für Stornorechnung (Typ 381) vor der ersten Korrektur bauen.
 11. Ferninspektion (Recherche `docs/recherche-ferninspektion-2026-10-08.md`): Anfrage an Ei Electronics
     (kundendienst@eielectronics.de, Konto/AES-Schlüssel/Datenpunkte/Empfänger/Bezug) am 08.10.2026 aus info@ gesendet,
@@ -59,3 +66,5 @@
     (`docs/nachbau-foxtag/01-grobstruktur.md`, 08.10.2026). Foxtag-Testkonto (info@, Zugang
     `~/.config/pgh-brandschutz/foxtag.env`) läuft bis ca. 08.11.2026 – darin Vorlagen „Rauchwarnmelder“ + „(EFH)“
     mit Demo-Anlagen angelegt. Nächste Stufe: Datenmodell und Masken im Detail. Patrick: `Info-Foxtac.txt` in Drive löschen.
+    Eigenes Repo `staubi0815/pgh-wartung` (privat, für Rauchwarnmelder + später Türen): Deploy-Key auf LXC 191
+    erzeugt (`~/.ssh/id_deploy_pgh-wartung`, Alias `github.com-pgh-wartung`) – Patrick legt Repo an + Key mit Schreibrecht.

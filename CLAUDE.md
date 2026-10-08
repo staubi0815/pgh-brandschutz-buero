@@ -33,6 +33,10 @@ Rauchmelder-Wartung nach DIN 14676 erst nach Fachkraft-Lehrgang.
 3. **Zugangsdaten** nur in `~/.config/pgh-brandschutz/` auf LXC 191 (`chmod 600`), nie im Chat.
 4. **Feuerwehr und Unternehmen strikt trennen** (keine Feuerwehrbilder/-bezüge auf Website o.ä.).
 5. Steuer-/Rechtsfragen: recherchieren, Quellen nennen, als "keine Steuerberatung" kennzeichnen.
+6. **Kunden- und Mieterdaten bleiben lokal** (Entscheidung Patrick 08.10.2026): NAS bzw. eigener Server.
+   Claude holt sie nicht in den Chat – Werkzeuge verarbeiten sie direkt und geben nur Zählwerte/Nummern aus;
+   Mailinhalte von info@ nur lesen, wenn Patrick darum bittet. Grund: Claude-Privatabo ohne AV-Vertrag
+   (Prüfbericht B9).
 
 ## Architektur (Zielbild)
 

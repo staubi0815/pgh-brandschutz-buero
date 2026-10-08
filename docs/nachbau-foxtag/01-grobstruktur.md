@@ -110,7 +110,15 @@ Zusatz (Pro): **Einzelnachweise** – je Wohnung ein eigenes PDF (z. B. für den
 
 ## 7. Eigenbau – Vorschlag Umfang
 
-**Übernehmen (Kern):** Datenmodell aus Abschnitt 3 (fest für Rauchwarnmelder), Fälligkeiten mit Ampel,
+**Anlagenarten statt fest verdrahtet (Patrick 08.10.2026: später kommen Türen/Feststellanlagen dazu):**
+Wie Foxtags „Wartungsanwendung“, aber schlanker – je Anlagenart eine Konfigurationsdatei im Repo statt eines
+Editors in der Oberfläche: Bezeichnungen (Gruppe = Wohnung bzw. Geschoss/Bauteil, Komponente = Melder bzw. Tür),
+Komponententypen mit Sub-Komponenten (Tür → Feststellanlage, Haftmagnet, Rauchschalter, Auslösetaster),
+Prüf-/Austauschintervalle, Checklisten, Mängeltypen, Auftragstypen/Ablauf, Unterschrift pro Gruppe j/n,
+Berichtstexte (DIN 14676-1 bzw. DIN 14677). Start mit „Rauchwarnmelder“; „Türen/Feststellanlagen“ ist dann eine
+weitere Datei plus ggf. Zusatzfelder (z. B. Zulassungsnummer DIBt, Feuerwiderstandsklasse).
+
+**Übernehmen (Kern):** Datenmodell aus Abschnitt 3, Fälligkeiten mit Ampel,
 Auftragsplanung, Prüfablauf mit Checkliste nach DIN 14676-1, Mängel, Unterschrift je Wohnung, PDF-Prüfbericht,
 Einzelnachweis je Wohnung, Excel-Import, Terminankündigung per Mail.
 
@@ -141,6 +149,11 @@ Foxtag (Bild + Zeitstempel + Name).
 
 Rechtlich: Funktionen und Abläufe nachbauen ist erlaubt. Nicht übernehmen: Foxtag-Code, Logo, Gestaltung 1:1,
 Texte und Vorlagen wörtlich. Checklisten eigenständig aus DIN 14676-1 formulieren.
+
+**Code:** eigenes privates Repo `staubi0815/pgh-wartung` (Web + App), Klon `~/repos/pgh-wartung`, Deploy-Key
+`~/.ssh/id_deploy_pgh-wartung` (Alias `github.com-pgh-wartung`). Dieses Repo hier bleibt fürs Büro; die
+Planungsdokumente ziehen mit um, sobald das neue Repo steht. Kunden-/Mieterdaten nie ins Repo (nur Code,
+Konfiguration, Testdaten mit erfundenen Namen).
 
 ## 9. Nächste Stufen
 
